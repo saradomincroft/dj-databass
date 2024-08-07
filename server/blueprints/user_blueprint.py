@@ -1,3 +1,4 @@
+# server/blueprints/user_blueprint.py
 from flask import Blueprint
 from flask_restful import Api
 from server.resources.user_resource import Signup, Login, Logout, Me, Users
@@ -10,4 +11,4 @@ api.add_resource(Signup, '/signup')
 api.add_resource(Login, '/login')
 api.add_resource(Logout, '/logout')
 api.add_resource(Me, '/me')
-api.add_resource(Users, '/users/<int:user_id>')
+api.add_resource(Users, '/users', '/users/<int:user_id>')
