@@ -18,6 +18,6 @@ db = SQLAlchemy()
 migrate = Migrate(app, db)
 db.init_app(app)
 api = Api(app)
-cors = CORS()
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 bcrypt = Bcrypt()
 

@@ -1,29 +1,35 @@
-// src/components/Signup.js
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 export default function Signup({ onSignup }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [isAdmin, setIsAdmin] = useState(false);
-    const [adminPassword, setAdminPassword] = useState('');
     const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (password !== confirmPassword) {
+            setError('Passwords do not match');
+            return;
+        }
         try {
             const response = await axios.post('http://localhost:4000/api/signup', {
                 username,
                 password,
-                is_admin: isAdmin,
-                admin_password: isAdmin ? adminPassword : undefined
+                is_admin: isAdmin
             });
             console.log(response.data);
             if (onSignup) {
-                onSignup(); // Notify App that signup was successful
+                onSignup(); // Notify parent component if needed
             }
+            // Redirect to home page after successful signup
+            navigate('/');
         } catch (err) {
-            setError('Signup failed');
+            setError('Signup failed: ' + (err.response?.data?.error || 'Unknown error'));
             console.error(err);
         }
     };
@@ -53,6 +59,16 @@ export default function Signup({ onSignup }) {
                 </label>
                 <br />
                 <label>
+                    Confirm Password:
+                    <input
+                        type="password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        required
+                    />
+                </label>
+                <br />
+                <label>
                     <input
                         type="checkbox"
                         checked={isAdmin}
@@ -60,20 +76,6 @@ export default function Signup({ onSignup }) {
                     />
                     Admin
                 </label>
-                {isAdmin && (
-                    <>
-                        <br />
-                        <label>
-                            Admin Password:
-                            <input
-                                type="password"
-                                value={adminPassword}
-                                onChange={(e) => setAdminPassword(e.target.value)}
-                                required
-                            />
-                        </label>
-                    </>
-                )}
                 <br />
                 <button type="submit">Signup</button>
             </form>

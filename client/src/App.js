@@ -9,24 +9,24 @@ function App() {
 
     useEffect(() => {
         // Check local storage for authentication status
-        const authStatus = sessionStorage.getItem('isAuthenticated');
+        const authStatus = localStorage.getItem('isAuthenticated');
         if (authStatus === 'true') {
             setIsAuthenticated(true);
         }
     }, []);
 
     const handleLogin = () => {
-        sessionStorage.setItem('isAuthenticated', 'true');
+        localStorage.setItem('isAuthenticated', 'true');
         setIsAuthenticated(true);
     };
 
     const handleSignup = () => {
-        sessionStorage.setItem('isAuthenticated', 'true');
+        localStorage.setItem('isAuthenticated', 'true');
         setIsAuthenticated(true);
     };
 
     const handleLogout = () => {
-        sessionStorage.removeItem('isAuthenticated');
+        localStorage.removeItem('isAuthenticated');
         setIsAuthenticated(false);
     };
 
