@@ -11,7 +11,7 @@ class Signup(Resource):
         data = parser.parse_args()
 
         if User.query.filter_by(username=data['username']).first():
-            return make_response({"error": "User already exists fdfdfdfdfdfdfdblaaaa"}, 400)
+            return make_response({"error": "User already exists"}, 400)
 
         new_user = User(username=data['username'], is_admin=data['is_admin'])
         new_user.hashed_password = data['password']

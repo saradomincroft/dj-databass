@@ -16,7 +16,7 @@
   "scripts": {
   "start": "concurrently \"npm run start-react\" \"npm run start-flask\"",
   "start-react": "cross-env PORT=3000 react-scripts start",
-  "start-flask": "cd .. && FLASK_APP=app.py flask run --port=4000",
+  "start-flask": "cd .. && FLASK_APP=app.py flask run --port=4000 --debug",
   "build": "react-scripts build",
   "test": "react-scripts test",
   "eject": "react-scripts eject"

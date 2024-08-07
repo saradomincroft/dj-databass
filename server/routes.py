@@ -12,4 +12,4 @@ def register_routes(app):
     # Register the main blueprint
     app.register_blueprint(main_blueprint)
     # Register user blueprint with prefix
-    app.register_blueprint(user_blueprint, url_prefix='/api') # , url_prefix='/api'
+    app.register_blueprint(user_blueprint, url_prefix='/api')
