@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import LandingPage from './components/LandingPage';  
 import Home from './components/Home';
 import Signup from './components/Signup';
+import AddDjPage from './components/AddDjPage';
 
 function App() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -46,6 +47,7 @@ function App() {
                         path="/signup"
                         element={isAuthenticated ? <Navigate to="/home" /> : <Signup onSignup={handleSignup} />}
                     />
+                    <Route path="/add-dj" element={<AddDjPage />} />
                     <Route path="*" element={<h1>404 - Not Found</h1>} />
                 </Routes>
             </div>

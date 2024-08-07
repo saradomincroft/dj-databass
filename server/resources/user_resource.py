@@ -90,3 +90,5 @@ class Users(Resource):
             return make_response({'message': 'User deleted successfully'}, 200)
         
         return make_response({'error': 'You do not have admin access to delete other users'}, 403)
+    
+

@@ -7,7 +7,7 @@ from sqlalchemy.ext.associationproxy import association_proxy
 
 # Base = declarative_base()
 
-class Dj(db.Model):
+class Dj(db.Model, SerializerMixin):
     __tablename__ = "djs"
 
     id = Column(Integer(), primary_key=True)
@@ -19,10 +19,6 @@ class Dj(db.Model):
 
     dj_subgenres = relationship("DjSubgenre", back_populates="dj")
     subgenres = association_proxy("dj_subgenres", "subgenre", creator=lambda s: DjSubgenre(subgenre=s))
-    # can ommit this
-    # instead of establishing with djs and genres 
-    # should have put the subgenre dj relationship with the genre itself
-    # chaining relationships (similar to movies ones - actors, genres)
 
     dj_venues = relationship("DjVenue", back_populates="dj")
     venues = association_proxy("dj_venues", "venue", creator=lambda v: DjVenue(venue=v))
@@ -30,6 +26,15 @@ class Dj(db.Model):
     def __repr__(self):
         return f"{self.name}"
 
+    def to_detailed_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'produces': self.produces,
+            'genres': [genre.title for genre in self.genres],
+            'subgenres': {genre.title: [subgenre.subtitle for subgenre in self.subgenres if subgenre.genre_id == genre.id] for genre in self.genres},
+            'venues': [venue.venuename for venue in self.venues]
+        }
 
 class Genre(db.Model):
     __tablename__ = "genres"
@@ -55,7 +60,6 @@ class DjGenre(db.Model):
     dj = relationship('Dj', back_populates='dj_genres')
     genre = relationship('Genre', back_populates='dj_genres')
 
-
 class Subgenre(db.Model):
     __tablename__ = "subgenres"
 
@@ -71,7 +75,6 @@ class Subgenre(db.Model):
     def __repr__(self):
         return f"{self.subtitle}"
 
-
 class DjSubgenre(db.Model):
     __tablename__ = "dj_subgenres"
 
@@ -81,7 +84,6 @@ class DjSubgenre(db.Model):
 
     dj = relationship('Dj', back_populates='dj_subgenres')
     subgenre = relationship('Subgenre', back_populates='dj_subgenres')
-
 
 class Venue(db.Model):
     __tablename__ = "venues"
@@ -94,7 +96,6 @@ class Venue(db.Model):
 
     def __repr__(self):
         return f"{self.venuename}"
-    
 
 class DjVenue(db.Model):
     __tablename__ = "dj_venues"
