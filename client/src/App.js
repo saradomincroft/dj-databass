@@ -1,9 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import LandingPage from './components/LandingPage';  
+import Navbar from './components/Navbar';
 import Home from './components/Home';
 import Signup from './components/Signup';
 import AddDjPage from './components/AddDjPage';
+
+function Layout({ children }) {
+    const location = useLocation();
+    return (
+        <>
+            {location.pathname !== '/' && <Navbar />}
+            {children}
+        </>
+    );
+}
 
 function App() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -34,6 +45,7 @@ function App() {
     return (
         <Router>
             <div className="App">
+                <Layout />
                 <Routes>
                     <Route
                         path="/"
