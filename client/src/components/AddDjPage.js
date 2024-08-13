@@ -7,13 +7,28 @@ export default function AddDjPage() {
     const [genreInput, setGenreInput] = useState('');
     const [genres, setGenres] = useState([]);
     const [subgenres, setSubgenres] = useState({});
+    const [venueInput, setVenueInput] = useState('');
     const [venues, setVenues] = useState([]);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
+        // Validate form fields
+        if (!name.trim() || genres.length === 0 || venues.length === 0) {
+            setError('Please fill out all required fields (DJ Name, at least one Genre, and at least one Venue).');
+            return;
+        }
+
+        // Validate that each genre has at least one subgenre
+        for (const genre of genres) {
+            if (!subgenres[genre] || subgenres[genre].length === 0) {
+                setError(`Each genre must have at least one subgenre. Please add subgenres for the genre "${genre}".`);
+                return;
+            }
+        }
+
         try {
             await axios.post('/api/dj/add', {
                 name,
@@ -51,6 +66,15 @@ export default function AddDjPage() {
         setSubgenres(updatedSubgenres);
     };
 
+    const handleRemoveSubgenre = (genre, index) => {
+        const updatedSubgenres = { ...subgenres };
+        updatedSubgenres[genre] = updatedSubgenres[genre].filter((_, i) => i !== index);
+        if (updatedSubgenres[genre].length === 0) {
+            delete updatedSubgenres[genre];
+        }
+        setSubgenres(updatedSubgenres);
+    };
+
     const handleGenreRemove = (genre) => {
         const updatedGenres = genres.filter(g => g !== genre);
         const updatedSubgenres = { ...subgenres };
@@ -59,8 +83,15 @@ export default function AddDjPage() {
         setSubgenres(updatedSubgenres);
     };
 
-    const handleVenueChange = (e) => {
-        setVenues(e.target.value.split(',').map(v => v.trim()));
+    const handleAddVenue = () => {
+        if (venueInput && !venues.includes(venueInput)) {
+            setVenues([...venues, venueInput]);
+            setVenueInput('');
+        }
+    };
+
+    const handleVenueRemove = (venue) => {
+        setVenues(venues.filter(v => v !== venue));
     };
 
     return (
@@ -106,18 +137,27 @@ export default function AddDjPage() {
                                         onChange={(e) => handleSubgenreChange(genre, subIndex, e.target.value)}
                                         placeholder="Enter subgenre"
                                     />
+                                    <button type="button" onClick={() => handleRemoveSubgenre(genre, subIndex)}>Remove Subgenre</button>
                                 </div>
                             ))}
                         </div>
                     ))}
                 </div>
                 <div>
-                    <label>Venues (comma-separated):</label>
+                    <label>Venues:</label>
                     <input
                         type="text"
-                        value={venues.join(', ')}
-                        onChange={handleVenueChange}
+                        value={venueInput}
+                        onChange={(e) => setVenueInput(e.target.value)}
+                        placeholder="Enter venue"
                     />
+                    <button type="button" onClick={handleAddVenue}>Add Venue</button>
+                    {venues.map((venue, index) => (
+                        <div key={index}>
+                            <span>{venue}</span>
+                            <button type="button" onClick={() => handleVenueRemove(venue)}>Remove Venue</button>
+                        </div>
+                    ))}
                 </div>
                 <button type="submit">Add DJ</button>
                 {error && <p style={{ color: 'red' }}>{error}</p>}

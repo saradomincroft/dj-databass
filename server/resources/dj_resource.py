@@ -75,15 +75,85 @@ class AddDj(Resource):
         return {'message': f'{name} added successfully'}, 201
 
 class ViewDjs(Resource):
-    def get(self, dj_id=None):
-        if dj_id:
-            # Retrieve a specific DJ by ID
-            dj = db.session.query(Dj).get(dj_id)
-            if dj:
-                return make_response(dj.to_detailed_dict(), 200)
-            return make_response({"error": "DJ not found"}, 404)
-        
-        # Retrieve all DJs
-        djs = db.session.query(Dj).all()
+    def get(self):
+        # Retrieve all DJs, sorted alphabetically by name
+        djs = db.session.query(Dj).order_by(Dj.name).all()
         result = [dj.to_detailed_dict() for dj in djs]
         return make_response(result, 200)
+    
+# server/resources/dj_resource.py
+class ViewDj(Resource):
+    def get(self, dj_id):
+        dj = Dj.query.get(dj_id)  # Use Dj model
+        if dj:
+            return {
+                'id': dj.id,
+                'name': dj.name,
+                'genres': [genre.title for genre in dj.genres],
+                'subgenres': {genre.title: [subgenre.subtitle for subgenre in genre.subgenres] for genre in dj.genres},
+                'venues': [venue.venuename for venue in dj.venues]
+            }, 200
+        return {'message': 'DJ not found'}, 404
+
+class SearchDjs(Resource):
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('search', type=str, help='Search term for DJ names')
+        args = parser.parse_args()
+
+        search_term = args['search']
+        
+        if search_term:
+            djs = db.session.query(Dj).filter(Dj.name.ilike(f'%{search_term}%')).order_by(Dj.name).all()
+        else:
+            djs = db.session.query(Dj).order_by(Dj.name).all()
+
+        result = [dj.to_detailed_dict() for dj in djs]
+        return make_response(result, 200)
+    
+
+# app/resources/dj_resource.py
+class UpdateDj(Resource):
+    def put(self, dj_id):
+        if not self._is_admin():
+            return {'error': 'Unauthorized'}, 403
+
+        parser = reqparse.RequestParser()
+        parser.add_argument('name', type=str)
+        parser.add_argument('produces', type=bool)
+        parser.add_argument('genres', type=list, location='json')
+        parser.add_argument('subgenres', type=dict, location='json', default={})
+        parser.add_argument('venues', type=list, location='json')
+        args = parser.parse_args()
+
+        dj = db.session.query(Dj).get(dj_id)
+        if not dj:
+            return {'error': 'DJ not found'}, 404
+
+        if args['name']:
+            dj.name = args['name']
+        if args['produces'] is not None:
+            dj.produces = args['produces']
+
+        # Update genres, subgenres, and venues
+        db.session.commit()
+        return {'message': 'DJ updated successfully'}, 200
+
+    def _is_admin(self):
+        return session.get('user_role') == 'admin'
+
+class DeleteDj(Resource):
+    def delete(self, dj_id):
+        if not self._is_admin():
+            return {'error': 'Unauthorized'}, 403
+        
+        dj = db.session.query(Dj).get(dj_id)
+        if not dj:
+            return {'error': 'DJ not found'}, 404
+        
+        db.session.delete(dj)
+        db.session.commit()
+        return {'message': 'DJ deleted successfully'}, 200
+
+    def _is_admin(self):
+        return session.get('user_role') == 'admin'
