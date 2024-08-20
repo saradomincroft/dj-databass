@@ -27,12 +27,24 @@ class Dj(db.Model, SerializerMixin):
         return f"{self.name}"
 
     def to_detailed_dict(self):
+        # Collect genres and their subgenres
+        genre_subgenre_mapping = {}
+        for subgenre in self.subgenres:
+            genre_title = subgenre.genre.title
+            if genre_title not in genre_subgenre_mapping:
+                genre_subgenre_mapping[genre_title] = []
+            genre_subgenre_mapping[genre_title].append(subgenre.subtitle)
+
+        formatted_genres_and_subgenres = ", ".join(
+            f"{genre}: {', '.join(subgenres)}" 
+            for genre, subgenres in genre_subgenre_mapping.items()
+        )
+
         return {
             'id': self.id,
             'name': self.name,
             'produces': self.produces,
-            'genres': [genre.title for genre in self.genres],
-            'subgenres': {genre.title: [subgenre.subtitle for subgenre in self.subgenres if subgenre.genre_id == genre.id] for genre in self.genres},
+            'genres_and_subgenres': formatted_genres_and_subgenres,
             'venues': [venue.venuename for venue in self.venues]
         }
 

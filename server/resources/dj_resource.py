@@ -14,12 +14,14 @@ class AddDj(Resource):
         parser.add_argument('venues', type=list, location='json', required=True, help='Venues are required')
         args = parser.parse_args()
 
-        name = args['name'].strip().title()
+        # Remove title case formatting
+        name = args['name'].strip()
         produces = args['produces']
-        genres = [genre.title() for genre in args['genres']]
-        subgenres = {genre.title(): [subgenre.title() for subgenre in subs] for genre, subs in args['subgenres'].items()}
-        venues = [venue.title() for venue in args['venues']]
+        genres = [genre.strip() for genre in args['genres']]
+        subgenres = {genre.strip(): [subgenre.strip() for subgenre in subs] for genre, subs in args['subgenres'].items()}
+        venues = [venue.strip() for venue in args['venues']]
 
+        # Check for duplicates including case
         existing_dj = db.session.query(Dj).filter(func.lower(Dj.name) == name.lower()).first()
         if existing_dj:
             return {'error': f'{name} already exists in the database'}, 400
@@ -86,13 +88,7 @@ class ViewDj(Resource):
     def get(self, dj_id):
         dj = Dj.query.get(dj_id)
         if dj:
-            return {
-                'id': dj.id,
-                'name': dj.name,
-                'genres': [genre.title for genre in dj.genres],
-                'subgenres': {genre.title: [subgenre.subtitle for subgenre in genre.subgenres] for genre in dj.genres},
-                'venues': [venue.venuename for venue in dj.venues]
-            }, 200
+            return dj.to_detailed_dict(), 200
         return {'message': 'DJ not found'}, 404
 
 class SearchDjs(Resource):

@@ -52,26 +52,8 @@ export default function DjPage() {
     return (
         <div>
             <h1>{dj.name}</h1>
-            <p><strong>Genres:</strong> {dj.genres ? dj.genres.join(', ') : 'N/A'}</p>
-            <div>
-                <strong>Subgenres:</strong>
-                {dj.subgenres && Object.keys(dj.subgenres).length > 0 ? (
-                    <ul>
-                        {Object.entries(dj.subgenres).map(([genre, subgenreGroup]) => (
-                            <li key={genre}>
-                                <strong>{genre}:</strong>
-                                <ul>
-                                    {subgenreGroup.map((subgenre, index) => (
-                                        <li key={index}>{subgenre}</li>
-                                    ))}
-                                </ul>
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p>N/A</p>
-                )}
-            </div>
+            <p><strong>Produces:</strong> {dj.produces ? 'Yes' : 'No'}</p>
+            <p><strong>Genres and Subgenres:</strong> {dj.genres_and_subgenres || 'N/A'}</p>
             <p><strong>Venues:</strong> {dj.venues ? dj.venues.join(', ') : 'N/A'}</p>
             
             {/* Conditionally render Update and Delete buttons based on admin status */}
