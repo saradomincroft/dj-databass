@@ -14,7 +14,7 @@ class AddDj(Resource):
         parser.add_argument('venues', type=list, location='json', required=True, help='Venues are required')
         args = parser.parse_args()
 
-        name = args['name']
+        name = args['name'].strip().title()
         produces = args['produces']
         genres = [genre.title() for genre in args['genres']]
         subgenres = {genre.title(): [subgenre.title() for subgenre in subs] for genre, subs in args['subgenres'].items()}
@@ -33,8 +33,8 @@ class AddDj(Resource):
             "drum and bass": "Drum & Bass",
             "d & b": "Drum & Bass",
             "d n b": "Drum & Bass",
-            "dubstep": "Dubstep/140",
-            "140": "Dubstep/140",
+            "dubstep": "Dubstep",
+            "140": "Dubstep",
         }
 
         # Add genres
@@ -129,7 +129,7 @@ class UpdateDj(Resource):
             return {'error': 'DJ not found'}, 404
 
         if args['name']:
-            dj.name = args['name']
+            dj.name = args['name'].strip().title()
         if args['produces'] is not None:
             dj.produces = args['produces']
 
@@ -161,3 +161,22 @@ class DeleteDj(Resource):
             return make_response({'message': 'DJ deleted successfully'}, 200)
         
         return make_response({'error': 'Forbidden'}, 403)
+
+class GenreList(Resource):
+    def get(self):
+        try:
+            genres = db.session.query(Genre).all()
+            return [{'id': genre.id, 'title': genre.title} for genre in genres], 200
+        except Exception as e:
+            return {'error': str(e)}, 500
+        
+class SubgenreList(Resource):
+    def get(self, genre_title):
+        try:
+            genre = db.session.query(Genre).filter(func.lower(Genre.title) == genre_title.lower()).first()
+            if not genre:
+                return {'message': 'Genre not found'}, 404
+            subgenres = db.session.query(Subgenre).filter(Subgenre.genre_id == genre.id).all()
+            return [{'id': subgenre.id, 'subtitle': subgenre.subtitle} for subgenre in subgenres]
+        except Exception as e:
+            return {'error': str(e)}, 500
