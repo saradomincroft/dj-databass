@@ -1,6 +1,7 @@
 from flask_restful import Resource, reqparse
 from flask import request, session, make_response
 from ..models.dj import Dj, Genre, Subgenre, Venue, db
+from ..models.user import User
 from sqlalchemy import func
 
 class AddDj(Resource):
@@ -81,10 +82,9 @@ class ViewDjs(Resource):
         result = [dj.to_detailed_dict() for dj in djs]
         return make_response(result, 200)
     
-# server/resources/dj_resource.py
 class ViewDj(Resource):
     def get(self, dj_id):
-        dj = Dj.query.get(dj_id)  # Use Dj model
+        dj = Dj.query.get(dj_id)
         if dj:
             return {
                 'id': dj.id,
@@ -110,9 +110,7 @@ class SearchDjs(Resource):
 
         result = [dj.to_detailed_dict() for dj in djs]
         return make_response(result, 200)
-    
 
-# app/resources/dj_resource.py
 class UpdateDj(Resource):
     def put(self, dj_id):
         if not self._is_admin():
@@ -144,16 +142,22 @@ class UpdateDj(Resource):
 
 class DeleteDj(Resource):
     def delete(self, dj_id):
-        if not self._is_admin():
-            return {'error': 'Unauthorized'}, 403
-        
-        dj = db.session.query(Dj).get(dj_id)
-        if not dj:
-            return {'error': 'DJ not found'}, 404
-        
-        db.session.delete(dj)
-        db.session.commit()
-        return {'message': 'DJ deleted successfully'}, 200
+        user_id = session.get('user_id')
+        if not user_id:
+            return make_response({'error': 'Unauthorized'}, 401)
 
-    def _is_admin(self):
-        return session.get('user_role') == 'admin'
+        current_user = User.query.get(user_id)
+        if not current_user:
+            return make_response({'error': 'Unauthorized'}, 401)
+
+        # Proceed with deletion if user is admin
+        dj_to_delete = Dj.query.get(dj_id)
+        if not dj_to_delete:
+            return make_response({'error': 'DJ not found'}, 404)
+        
+        if current_user.is_admin:
+            db.session.delete(dj_to_delete)
+            db.session.commit()
+            return make_response({'message': 'DJ deleted successfully'}, 200)
+        
+        return make_response({'error': 'Forbidden'}, 403)

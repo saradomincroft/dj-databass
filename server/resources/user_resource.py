@@ -48,14 +48,25 @@ class Me(Resource):
                 return make_response(user.to_dict(), 200)
         return make_response({"error": "Not signed in"}, 403)
 
+
 class Users(Resource):
-    def get(self):
-        user_id = session.get('user_id')
-        user = User.query.get(user_id)
-        if user and user.is_admin:
-            users = [u.to_dict() for u in User.query.all()]
-            return make_response(users, 200)
-        return make_response({"error": "Access forbidden"}, 403)
+    def get(self, user_id=None):
+        if user_id is None:
+            # List all users
+            current_user_id = session.get('user_id')
+            current_user = User.query.get(current_user_id)
+            
+            if current_user and current_user.is_admin:
+                users = [u.to_dict() for u in User.query.all()]
+                return make_response(users, 200)
+            return make_response({"error": "Access forbidden"}, 403)
+        else:
+            # Retrieve a specific user
+            user = User.query.get(user_id)
+            if user:
+                return make_response(user.to_dict(), 200)
+            return make_response({"error": "User not found"}, 404)
+    
     
     def delete(self, identifier):
         current_user_id = session.get('user_id')

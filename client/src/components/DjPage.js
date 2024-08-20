@@ -7,17 +7,23 @@ export default function DjPage() {
     const navigate = useNavigate();
     const [dj, setDj] = useState(null);
     const [error, setError] = useState(null);
+    const [user, setUser] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 // Fetch DJ details
-                const response = await axios.get(`/api/dj/${dj_id}`);
-                setDj(response.data);
+                const djResponse = await axios.get(`/api/dj/${dj_id}`);
+                setDj(djResponse.data);
+
+                // Fetch user details to check admin status
+                const userResponse = await axios.get('http://localhost:4000/api/me', { withCredentials: true });
+                setUser(userResponse.data);
+
                 setError(null);
             } catch (error) {
-                console.error('Error fetching DJ details:', error);
-                setError('Error fetching DJ details. Please check the console for more details.');
+                console.error('Error fetching data:', error);
+                setError('Error fetching data. Please check the console for more details.');
             }
         };
 
@@ -27,7 +33,7 @@ export default function DjPage() {
     const handleDelete = async () => {
         if (window.confirm('Are you sure you want to delete this DJ?')) {
             try {
-                await axios.delete(`/api/dj/${dj_id}`);
+                await axios.delete(`/api/dj/${dj_id}`, { withCredentials: true });
                 navigate('/djs');
             } catch (error) {
                 console.error('Error deleting DJ:', error);
@@ -67,10 +73,15 @@ export default function DjPage() {
                 )}
             </div>
             <p><strong>Venues:</strong> {dj.venues ? dj.venues.join(', ') : 'N/A'}</p>
-            <div>
-                <button onClick={handleUpdate}>Update</button>
-                <button onClick={handleDelete}>Delete</button>
-            </div>
+            
+            {/* Conditionally render Update and Delete buttons based on admin status */}
+            {user && user.is_admin && (
+                <div>
+                    <button onClick={handleUpdate}>Update</button>
+                    <button onClick={handleDelete}>Delete</button>
+                </div>
+            )}
+            
             <button onClick={() => navigate('/djs')}>Back to DJs</button>
         </div>
     );

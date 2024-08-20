@@ -24,7 +24,7 @@ export default function Signup({ onSignup }) {
             });
             console.log(response.data);
             if (onSignup) {
-                onSignup(); // Notify parent component if needed
+                onSignup();
             }
             // Redirect to home page after successful signup
             navigate('/');

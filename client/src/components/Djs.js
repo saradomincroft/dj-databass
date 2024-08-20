@@ -12,7 +12,7 @@ export default function Djs() {
         fetchAllDjs();
     }, []);
 
-    // Fetch all DJs when the component mounts
+    // Fetch all DJs
     const fetchAllDjs = async () => {
         try {
             const response = await axios.get('/api/djs');
