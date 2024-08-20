@@ -10,27 +10,29 @@ export default function Djs() {
 
     const [genres, setGenres] = useState([]);
     const [subgenres, setSubgenres] = useState([]);
+    const [venues, setVenues] = useState([]);
     const [selectedGenre, setSelectedGenre] = useState('');
     const [selectedSubgenre, setSelectedSubgenre] = useState('');
+    const [selectedVenue, setSelectedVenue] = useState('');
 
     useEffect(() => {
         fetchAllDjs();
         fetchGenres();
+        fetchVenues();
     }, []);
 
     useEffect(() => {
-        filterDjs(); // Filter DJs when search, genre, or subgenre changes
-    }, [search, selectedGenre, selectedSubgenre]);
-
-    useEffect(() => {
         if (selectedGenre) {
-            fetchSubgenres(selectedGenre);
+            fetchSubgenres();
         } else {
             setSubgenres([]); // Clear subgenres if no genre is selected
         }
     }, [selectedGenre]);
 
-    // Fetch all DJs
+    useEffect(() => {
+        filterDjs();
+    }, [search, selectedGenre, selectedSubgenre, selectedVenue]);
+
     const fetchAllDjs = async () => {
         try {
             const response = await axios.get('/api/djs');
@@ -49,67 +51,90 @@ export default function Djs() {
             setGenres(response.data);
         } catch (error) {
             setError('Error fetching genres');
-            console.error('Error fetching genres', error);
+            console.error('Error fetching genres:', error);
         }
     };
 
-    const fetchSubgenres = async (genre) => {
-        if (!genre) {
-            setSubgenres([]); // Clear subgenres if no genre is selected
-            return;
-        }
+    const fetchSubgenres = async () => {
         try {
-            console.log(`Fetching subgenres for genre: ${genre}`); // Debugging log
-            const response = await axios.get(`/api/genres/${encodeURIComponent(genre)}/subgenres`);
-            console.log('Subgenres response:', response.data); // Debugging log
+            const response = await axios.get(`/api/genres/${encodeURIComponent(selectedGenre)}/subgenres`);
             setSubgenres(response.data);
-            setError(null); // Clear any previous errors
         } catch (error) {
-            setError(`Error fetching subgenres for genre ${genre}`);
+            setError('Error fetching subgenres');
             console.error('Error fetching subgenres:', error);
+        }
+    };
+
+    const fetchVenues = async () => {
+        try {
+            const response = await axios.get('/api/venues');
+            console.log('Fetched venues:', response.data); // Log the fetched venues
+            setVenues(response.data);
+        } catch (error) {
+            setError('Error fetching venues');
+            console.error('Error fetching venues:', error);
         }
     };
     
 
     const filterDjs = () => {
         let filtered = allDjs;
-    
+
         if (search.trim() !== '') {
             filtered = filtered.filter(dj =>
                 dj.name.toLowerCase().includes(search.toLowerCase())
             );
         }
-    
+
         if (selectedGenre) {
-            filtered = filtered.filter(dj =>
-                dj.genres && dj.genres.includes(selectedGenre)
-            );
+            filtered = filtered.filter(dj => {
+                const genres = dj.genres || [];
+                return genres.includes(selectedGenre);
+            });
         }
-    
-        if (selectedSubgenre) {
-            filtered = filtered.filter(dj =>
-                dj.subgenres && Object.values(dj.subgenres).flat().includes(selectedSubgenre)
-            );
+
+        if (selectedSubgenre && selectedGenre) {
+            filtered = filtered.filter(dj => {
+                const subgenres = dj.subgenres && dj.subgenres[selectedGenre] || [];
+                return subgenres.includes(selectedSubgenre);
+            });
         }
-    
+
+        if (selectedVenue) {
+            filtered = filtered.filter(dj => {
+                const venues = dj.venues || [];
+                return venues.includes(selectedVenue);
+            });
+        }
+
         setFilteredDjs(filtered);
     };
 
-    const handleSearch = (searchTerm) => {
-        setSearch(searchTerm);
-    };
-
-    const handleChange = (e) => {
-        handleSearch(e.target.value);
+    const handleSearch = (event) => {
+        setSearch(event.target.value);
     };
 
     const handleGenreChange = (event) => {
-        const selectedGenre = event.target.value;
-        setSelectedGenre(selectedGenre);  // Set the selected genre
-        setSubgenres([]);  // Clear the subgenres
-        // Fetch new subgenres based on the selected genre
-        fetchSubgenres(selectedGenre);
-};
+        setSelectedGenre(event.target.value);
+        setSelectedSubgenre('');
+    };
+
+    const handleSubgenreChange = (event) => {
+        setSelectedSubgenre(event.target.value);
+    };
+
+    const handleVenueChange = (event) => {
+        setSelectedVenue(event.target.value);
+    };
+
+    const handleClear = () => {
+        setSearch('');
+        setSelectedGenre('');
+        setSelectedSubgenre('');
+        setSelectedVenue('');
+        setSubgenres([]);
+        setFilteredDjs(allDjs); // Reset filtered DJs to the original list
+    };
 
     return (
         <div>
@@ -118,7 +143,7 @@ export default function Djs() {
                 type="text"
                 placeholder="Search DJs by name"
                 value={search}
-                onChange={handleChange}
+                onChange={handleSearch}
             />
 
             <div>
@@ -126,7 +151,7 @@ export default function Djs() {
                 <select
                     id="genre"
                     value={selectedGenre}
-                    onChange={(e) => setSelectedGenre(e.target.value)}
+                    onChange={handleGenreChange}
                 >
                     <option value="">Select Genre</option>
                     {genres.map(genre => (
@@ -137,22 +162,41 @@ export default function Djs() {
                 </select>
             </div>
 
+            {selectedGenre && (
+                <div>
+                    <label htmlFor="subgenre">Subgenre:</label>
+                    <select
+                        id="subgenre"
+                        value={selectedSubgenre}
+                        onChange={handleSubgenreChange}
+                    >
+                        <option value="">Select Subgenre</option>
+                        {subgenres.map(subgenre => (
+                            <option key={subgenre.id} value={subgenre.subtitle}>
+                                {subgenre.subtitle}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+            )}
+
             <div>
-                <label htmlFor="subgenre">Subgenre:</label>
+                <label htmlFor="venue">Venue:</label>
                 <select
-                    id="subgenre"
-                    value={selectedSubgenre}
-                    onChange={(e) => setSelectedSubgenre(e.target.value)}
-                    disabled={!selectedGenre} // Disable if no genre is selected
+                    id="venue"
+                    value={selectedVenue}
+                    onChange={handleVenueChange}
                 >
-                    <option value="">Select Subgenre</option>
-                    {subgenres.map(subgenre => (
-                        <option key={subgenre.id} value={subgenre.subtitle}>
-                            {subgenre.subtitle}
+                    <option value="">Select Venue</option>
+                    {venues.map(venue => (
+                        <option key={venue.id} value={venue.venuename}>
+                            {venue.venuename}
                         </option>
                     ))}
                 </select>
             </div>
+
+            <button onClick={handleClear}>Clear Filters</button>
 
             {error && <p>{error}</p>}
             {filteredDjs.length === 0 && !error && <p>No DJs found</p>}

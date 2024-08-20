@@ -17,9 +17,9 @@ class AddDj(Resource):
         # Remove title case formatting
         name = args['name'].strip()
         produces = args['produces']
-        genres = [genre.strip() for genre in args['genres']]
-        subgenres = {genre.strip(): [subgenre.strip() for subgenre in subs] for genre, subs in args['subgenres'].items()}
-        venues = [venue.strip() for venue in args['venues']]
+        genres = [genre.strip().title() for genre in args['genres']]
+        subgenres = {genre.strip().title(): [subgenre.strip().title() for subgenre in subs] for genre, subs in args['subgenres'].items()}
+        venues = [venue.strip().title() for venue in args['venues']]
 
         # Check for duplicates including case
         existing_dj = db.session.query(Dj).filter(func.lower(Dj.name) == name.lower()).first()
@@ -174,5 +174,13 @@ class SubgenreList(Resource):
                 return {'message': 'Genre not found'}, 404
             subgenres = db.session.query(Subgenre).filter(Subgenre.genre_id == genre.id).all()
             return [{'id': subgenre.id, 'subtitle': subgenre.subtitle} for subgenre in subgenres]
+        except Exception as e:
+            return {'error': str(e)}, 500
+        
+class VenueList(Resource):
+    def get(self):
+        try:
+            venues = db.session.query(Venue).all()
+            return [{'id': venue.id, 'venuename': venue.venuename} for venue in venues], 200
         except Exception as e:
             return {'error': str(e)}, 500

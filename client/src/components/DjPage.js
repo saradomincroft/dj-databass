@@ -17,7 +17,7 @@ export default function DjPage() {
                 setDj(djResponse.data);
 
                 // Fetch user details to check admin status
-                const userResponse = await axios.get('http://localhost:4000/api/me', { withCredentials: true });
+                const userResponse = await axios.get('/api/me', { withCredentials: true });
                 setUser(userResponse.data);
 
                 setError(null);
@@ -53,8 +53,26 @@ export default function DjPage() {
         <div>
             <h1>{dj.name}</h1>
             <p><strong>Produces:</strong> {dj.produces ? 'Yes' : 'No'}</p>
-            <p><strong>Genres and Subgenres:</strong> {dj.genres_and_subgenres || 'N/A'}</p>
-            <p><strong>Venues:</strong> {dj.venues ? dj.venues.join(', ') : 'N/A'}</p>
+            <p>
+                <strong>Genres and Subgenres:</strong> 
+                {dj.genres.length > 0 ? (
+                    <ul>
+                        {dj.genres.map((genre) => (
+                            <li key={genre}>
+                                {genre}
+                                <ul>
+                                    {dj.subgenres[genre] ? (
+                                        dj.subgenres[genre].map((subgenre, index) => (
+                                            <li key={index}>{subgenre}</li>
+                                        ))
+                                    ) : null}
+                                </ul>
+                            </li>
+                        ))}
+                    </ul>
+                ) : 'N/A'}
+            </p>
+            <p><strong>Venues:</strong> {dj.venues.length > 0 ? dj.venues.join(', ') : 'N/A'}</p>
             
             {/* Conditionally render Update and Delete buttons based on admin status */}
             {user && user.is_admin && (

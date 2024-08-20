@@ -35,18 +35,15 @@ class Dj(db.Model, SerializerMixin):
                 genre_subgenre_mapping[genre_title] = []
             genre_subgenre_mapping[genre_title].append(subgenre.subtitle)
 
-        formatted_genres_and_subgenres = ", ".join(
-            f"{genre}: {', '.join(subgenres)}" 
-            for genre, subgenres in genre_subgenre_mapping.items()
-        )
-
         return {
             'id': self.id,
             'name': self.name,
             'produces': self.produces,
-            'genres_and_subgenres': formatted_genres_and_subgenres,
+            'genres': list(genre_subgenre_mapping.keys()),  # List of genres
+            'subgenres': genre_subgenre_mapping,  # Mapping of genres to their subgenres
             'venues': [venue.venuename for venue in self.venues]
         }
+
 
 class Genre(db.Model):
     __tablename__ = "genres"
