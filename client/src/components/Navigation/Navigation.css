@@ -1,0 +1,110 @@
+.custom-navbar {
+    background-image: url('/public/img/bg.jpg');
+    height: 50px;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+    left: 0;
+    text-align: center;
+  }
+  
+  .custom-navbar .navbar-nav {
+    position: absolute;
+  }
+  
+  .custom-navbar .navbar-nav .nav-link {
+    padding: 10px 20px;
+    font-size: 18px;
+    font-family: monospace;
+    color: #f8f8f0;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .custom-navbar .navbar-nav .nav-link:hover {
+    background-color: #444;
+  }
+  
+  .custom-navbar .navbar-nav .nav-link.active {
+    background-color: #333;
+    color: #FF2400;
+  }
+  
+  .sidebar {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1100;
+    top: 0;
+    right: 0;
+    background-image: url('/public/img/bg.jpg');
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+  }
+  
+  .sidebar .nav-link {
+    padding: 15px;
+    text-align: center;
+    font-size: 18px;
+    font-family: monospace;
+    transition: 0.3s;
+    display: block;
+    color: #f8f8f0;
+    cursor: pointer; 
+    width: 100%;
+  }
+  
+  .sidebar .nav-link.active {
+    background-color: #333;
+    color: #FF2400;
+  }
+  
+  .sidebar .nav-link:hover {
+    background-color: #444;
+  }
+  
+  .open-menu {
+    font-size: 30px;
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0);
+    color: #f8f8f0;
+    border: none;
+    position: fixed;
+    top: 1px;
+    right: 1px;
+    z-index: 1001;
+  }
+  
+  .open-menu:hover {
+    transform: scale(1.1);
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .closebtn {
+    font-size: 30px;
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0);
+    color: #f8f8f0;
+    border: none;
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    z-index: 2;
+  }
+  
+  .closebtn:hover {
+    transform: scale(1.1);
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  @media (min-width: 992px) {
+    .open-menu {
+      display: none;
+    }
+  
+    .sidebar {
+      display: none;
+    }
+  }
+  

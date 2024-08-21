@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import LandingPage from './components/LandingPage';
-import Navbar from './components/Navbar';
+import Navigation from './components/Navigation/Navigation';
 import Home from './components/Home';
 import Signup from './components/Signup';
 import Me from './components/Me';
@@ -14,7 +14,7 @@ function Layout({ children }) {
     const location = useLocation();
     return (
         <>
-            {location.pathname !== '/' && <Navbar />}
+            {location.pathname !== '/' && <Navigation />}
             {children}
         </>
     );

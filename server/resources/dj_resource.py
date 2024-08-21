@@ -14,7 +14,6 @@ class AddDj(Resource):
         parser.add_argument('venues', type=list, location='json', required=True, help='Venues are required')
         args = parser.parse_args()
 
-        # Remove title case formatting
         name = args['name'].strip()
         produces = args['produces']
         genres = [genre.strip().title() for genre in args['genres']]

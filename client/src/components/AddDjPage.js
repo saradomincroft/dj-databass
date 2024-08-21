@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
 
 export default function AddDjPage() {
     const [name, setName] = useState('');
@@ -11,6 +12,8 @@ export default function AddDjPage() {
     const [venues, setVenues] = useState([]);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+
+    const navigate = useNavigate(); // Initialize useNavigate
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -94,6 +97,22 @@ export default function AddDjPage() {
         setVenues(venues.filter(v => v !== venue));
     };
 
+    const handleClearForm = () => {
+        setName('');
+        setProduces(false);
+        setGenreInput('');
+        setGenres([]);
+        setSubgenres({});
+        setVenueInput('');
+        setVenues([]);
+        setError('');
+        setSuccess('');
+    };
+
+    const handleBackToDJs = () => {
+        navigate('/djs'); // Navigate to the DJs list page
+    };
+
     return (
         <div>
             <h1>Add DJ</h1>
@@ -160,6 +179,8 @@ export default function AddDjPage() {
                     ))}
                 </div>
                 <button type="submit">Add DJ</button>
+                <button type="button" onClick={handleClearForm}>Clear Form</button>
+                <button type="button" onClick={handleBackToDJs}>Back to DJs</button>
                 {error && <p style={{ color: 'red' }}>{error}</p>}
                 {success && <p style={{ color: 'green' }}>{success}</p>}
             </form>
