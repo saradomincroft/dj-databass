@@ -1,6 +1,7 @@
 from flask_restful import Resource, reqparse
 from flask import request, session, make_response
 from ..models.user import User, db
+from ..config import bcrypt
 
 class Signup(Resource):
     def post(self):
@@ -14,6 +15,7 @@ class Signup(Resource):
             return make_response({"error": "User already exists"}, 400)
 
         new_user = User(username=data['username'], is_admin=data['is_admin'])
+
         new_user.hashed_password = data['password']
 
         db.session.add(new_user)
@@ -28,11 +30,22 @@ class Login(Resource):
         username = data.get('username')
         password = data.get('password')
 
+        print(f"Login attempt: username={username}, password={password}")
+
         user = User.query.filter_by(username=username).first()
-        if user and user.authenticate(password):
-            session['user_id'] = user.id
-            return make_response(f'Welcome {user.to_dict()}', 200)
+        if user:
+            print(f"User found: {user.username}, Hashed password: {user.hashed_password}")
+            if user.authenticate(password):
+                session['user_id'] = user.id
+                print(f"Login successful, user_id set to {user.id}")
+                return make_response({"user": user.to_dict()}, 200)
+            else:
+                print("Password mismatch")
+        else:
+            print("User not found")
+
         return make_response({"error": "Unauthorized"}, 403)
+
 
 class Logout(Resource):
     def delete(self):
@@ -47,7 +60,6 @@ class Me(Resource):
             if user:
                 return make_response(user.to_dict(), 200)
         return make_response({"error": "Not signed in"}, 403)
-
 
 class Users(Resource):
     def get(self, user_id=None):
