@@ -42,6 +42,7 @@ export default function Navigation() {
                             <Nav.Link as={NavLink} to='/' exact onClick={() => openTab('home', '/')}>Home</Nav.Link>
                             <Nav.Link as={NavLink} to="/add-dj" onClick={() => openTab('add-dj', '/add-dj')}>Add DJ</Nav.Link>
                             <Nav.Link as={NavLink} to="/djs" onClick={() => openTab('djs', '/djs')}>DJs</Nav.Link>
+                            <Nav.Link as={NavLink} to="/me" className="nav-link" onClick={() => openTab('me', '/me')}>Account</Nav.Link>
                        </Nav>
                     </Navbar.Collapse>
                 </Container>
@@ -50,30 +51,13 @@ export default function Navigation() {
             <div id="mySidebar" className="sidebar">
                 <button className="closebtn" onClick={closeNav}>×</button>
                 <Nav className="flex-column align-items-center custom-nav">
-                <Nav.Link as={NavLink} to="/" exact className="nav-link" onClick={() => openTab('home', '/')}>Home</Nav.Link>
-                <Nav.Link as={NavLink} to="/add-dj" className="nav-link" onClick={() => openTab('add-dj', '/add-dj')}>Add DJ</Nav.Link>
-                <Nav.Link as={NavLink} to="/djs" className="nav-link" onClick={() => openTab('djs', '/djs')}>DJs</Nav.Link>
-                <Nav.Link as={NavLink} to="/me" className="nav-link" onClick={() => openTab('me', '/me')}>Me</Nav.Link>
-        </Nav>
-      </div>
-
+                    <Nav.Link as={NavLink} to="/" exact className="nav-link" onClick={() => openTab('home', '/')}>Home</Nav.Link>
+                    <Nav.Link as={NavLink} to="/add-dj" className="nav-link" onClick={() => openTab('add-dj', '/add-dj')}>Add DJ</Nav.Link>
+                    <Nav.Link as={NavLink} to="/djs" className="nav-link" onClick={() => openTab('djs', '/djs')}>DJs</Nav.Link>
+                    <Nav.Link as={NavLink} to="/me" className="nav-link" onClick={() => openTab('me', '/me')}>Account</Nav.Link>
+                </Nav>
+            </div>
         </div>
-        // <nav>
-        //     <ul>
-        //         <li>
-        //             <Link to="/">Home</Link>
-        //         </li>
-        //         <li>
-        //             <Link to="/add-dj">Add DJ</Link>
-        //         </li>
-        //         <li>
-        //             <Link to="/djs">DJs</Link>
-        //         </li>
-        //         <li>
-        //             <Link to="/me">Me</Link>
-        //         </li>
-
-        //     </ul>
-        // </nav>
+  
     );
 };

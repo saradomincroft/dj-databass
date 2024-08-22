@@ -5,6 +5,8 @@ from ..config import bcrypt
 
 class Signup(Resource):
     def post(self):
+        session.pop('user_id', None) # Clear previous session data
+
         parser = reqparse.RequestParser()
         parser.add_argument('username', required=True, help="Username cannot be blank!")
         parser.add_argument('password', required=True, help="Password cannot be blank!")
