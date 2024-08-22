@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import './App.css'
 import LandingPage from './components/LandingPage';
 import Navigation from './components/Navigation/Navigation';
-import Home from './components/Home';
+import Home from './components/Home/Home';
 import Signup from './components/Signup';
 import Me from './components/Me';
 import AddDjPage from './components/AddDjPage';
