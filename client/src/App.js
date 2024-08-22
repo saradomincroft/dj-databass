@@ -6,7 +6,7 @@ import Navigation from './components/Navigation/Navigation';
 import Home from './components/Home/Home';
 import Signup from './components/Signup';
 import Me from './components/Me';
-import AddDjPage from './components/AddDjPage';
+import AddDjPage from './components/AddDjPage/AddDjPage';
 import Djs from './components/Djs';
 import DjPage from './components/DjPage';
 

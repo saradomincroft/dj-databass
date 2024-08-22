@@ -1,0 +1,86 @@
+.add-dj-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: auto;
+}
+
+.form-section {
+    margin-bottom: 1em;
+    position: relative;
+}
+
+.dj-name-input-container {
+    display: flex;
+    align-items: center;
+}
+
+.dj-name-input-container input {
+    flex: 1;
+}
+
+.dj-name-input-container button {
+    margin-left: 10px;
+}
+
+.error, .success {
+    font-size: 0.875em;
+    margin-top: 0.5em;
+}
+
+.error {
+    color: #d9534f; /* Red for error */
+}
+
+.success {
+    color: #5bc0de; /* Light blue for success */
+}
+
+.hidden {
+    display: none;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1em;
+}
+
+.form-actions button {
+    margin-right: 10px;
+}
+
+.genre-section, .venue-section {
+    margin-bottom: 0.5em;
+}
+
+.subgenre-section {
+    display: flex;
+    align-items: center;
+}
+
+.subgenre-section input {
+    margin-right: 10px;
+}
+
+.form-messages {
+    margin-top: 1em;
+    min-height: 2em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.form-messages .text-error {
+    color: #d9534f;
+}
+
+.form-messages .text-success {
+    color: #5bc0de;
+}
