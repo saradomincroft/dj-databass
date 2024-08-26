@@ -12,6 +12,8 @@ export default function Me() {
     const [newPassword, setNewPassword] = useState('');
     const [confirmNewPassword, setConfirmNewPassword] = useState('');
     const [showPasswordForm, setShowPasswordForm] = useState(false);
+    const [showUsernameUpdate, setShowUsernameUpdate] = useState(false);
+    const [showUsernameConfirmation, setShowUsernameConfirmation] = useState(false);
 
     useEffect(() => {
         fetchUserData();
@@ -26,6 +28,13 @@ export default function Me() {
             setError('Error fetching user data. Please make sure you are logged in.');
             console.error('Error fetching user data:', error);
         }
+    };
+
+    const clearMessagesAfterTimeout = () => {
+        setTimeout(() => {
+            setError(null);
+            setSuccessMessage(null);
+        }, 2000);
     };
 
     const handleProfileImageChange = (e) => {
@@ -60,16 +69,32 @@ export default function Me() {
     };
 
     const handleUsernameUpdate = async () => {
-        if (!username.trim()) return;
+        if (!username.trim()) {
+            setError('Username cannot be blank.');
+            clearMessagesAfterTimeout();
+            return;
+        }
 
         try {
-            await axios.put('http://localhost:4000/api/me', { username }, { withCredentials: true });
+            await axios.patch('http://localhost:4000/api/me', { username }, { withCredentials: true });
             setUsername('');
             setSuccessMessage('Username updated successfully.');
             fetchUserData();
+            setShowUsernameUpdate(false);
         } catch (error) {
-            setError('Failed to update username.');
+            if (error.response) {
+                if (error.response.status === 409) {
+                    setError('Username already exists.');
+                } else if (error.response.data && error.response.data.error) {
+                    setError(error.response.data.error);
+                } else {
+                    setError('Failed to update username.');
+                }
+            } else {
+                setError('Failed to update username.');
+            }
             console.error('Error updating username:', error);
+            clearMessagesAfterTimeout();
         }
     };
 
@@ -109,50 +134,57 @@ export default function Me() {
         setSuccessMessage(null);
     };
 
-    if (!user) {
-        return <div>Loading...</div>;
-    }
+    const toggleUsernameUpdate = () => {
+        setShowUsernameUpdate(!showUsernameUpdate);
+        setError(null);
+        setSuccessMessage(null);
+    };
 
     return (
         <div id="Me" className="tabcontent">
-            <h1>User Information</h1>
+            <h1>{user ? user.username : 'Loading...'}</h1>
 
             {/* Profile Picture Section */}
             <div className="profile-picture-section">
                 <img
-                    src={user.profileImageUrl || '/img/default-profile.jpg'}
+                    src={user?.profileImageUrl || '/img/default-profile.jpg'}
                     alt="Profile Image"
                     className="profile-picture"
                 />
                 <div className="profile-picture-actions">
                     <input type="file" onChange={handleProfileImageChange} />
-                    <button onClick={handleProfileImageUpload}>Upload Profile Picture</button>
-                    <button onClick={handleProfileImageDelete}>Delete Profile Picture</button>
+                    <button className="profile-image-button" onClick={handleProfileImageUpload}>Upload Profile Picture</button>
+                    <button className="profile-image-button" onClick={handleProfileImageDelete}>Delete Profile Picture</button>
                 </div>
             </div>
 
-            {/* User Info */}
-            <p><strong>Username:</strong> {user.username}</p>
-            <p><strong>Admin Status:</strong> {user.is_admin ? 'Yes' : 'No'}</p>
+            {/* Display Admin status (or blank for non-admins) */}
+            <h2>{user?.is_admin ? 'Admin User' : ''}</h2>
 
             {/* Update Username Section */}
             <div className="update-username-section">
-                <input
-                    type="text"
-                    placeholder="New username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                />
-                <button onClick={handleUsernameUpdate}>Update Username</button>
+                {!showUsernameUpdate ? (
+                    <button className="username-button" onClick={toggleUsernameUpdate}>Update Username</button>
+                ) : (
+                    <div className="username-form">
+                        <input
+                            type="text"
+                            placeholder="New username"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            className="username-input"
+                        />
+                        <button className="confirm-button" onClick={handleUsernameUpdate}>Submit</button>
+                        <button className="cancel-button" onClick={toggleUsernameUpdate}>Cancel</button>
+                    </div>
+                )}
             </div>
 
             {/* Change Password Section */}
-            <div className="change-password-section">
-                <button onClick={togglePasswordForm}>
-                    {showPasswordForm ? 'Cancel' : 'Update Password'}
-                </button>
-
-                {showPasswordForm && (
+            <div className="update-password-section">
+                {!showPasswordForm ? (
+                    <button className="password-button" onClick={togglePasswordForm}>Update Password</button>
+                ) : (
                     <div className="password-form">
                         <input
                             type="password"
@@ -172,7 +204,8 @@ export default function Me() {
                             value={confirmNewPassword}
                             onChange={(e) => setConfirmNewPassword(e.target.value)}
                         />
-                        <button onClick={handlePasswordChange}>Submit</button>
+                        <button className="confirm-button" onClick={handlePasswordChange}>Submit</button>
+                        <button className="cancel-button" onClick={togglePasswordForm}>Cancel</button>
                     </div>
                 )}
             </div>

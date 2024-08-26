@@ -2,8 +2,8 @@ from flask_restful import Resource, reqparse
 from flask import request, session, make_response
 from werkzeug.utils import secure_filename
 import os
-from ..models.user import User, db
-from ..config import bcrypt, UPLOAD_FOLDER
+from server.models.user import User, db
+from server.config import bcrypt, UPLOAD_FOLDER
 
 class Signup(Resource):
     def post(self):
@@ -76,16 +76,42 @@ class Me(Resource):
             return make_response({"error": "User not found"}, 404)
         
         data = request.get_json()
+
         old_password = data.get('oldPassword')
         new_password = data.get('newPassword')
+        username = data.get('username')
 
-        if not user.authenticate(old_password):
-            return make_response({"error": "Old password is incorrect."}, 401)
+        # Handle password update
+        if old_password and new_password:
+            if not user.authenticate(old_password):
+                return make_response({"error": "Old password is incorrect."}, 401)
+            
+            # Update the password
+            user.hashed_password = new_password
+            db.session.commit()
+            return make_response({"message": "Password updated successfully."}, 200)
         
-        user.hashed_password = new_password
-        db.session.commit()
+        # Handle username update
+        if username:
+            if not username.strip():
+                return make_response({"error": "Username cannot be blank."}, 400)
+            
+            if username == user.username:
+                return make_response({"error": "New username is the same as the current username."}, 400)
+            
+            existing_user = User.query.filter_by(username=username).first()
+            if existing_user:
+                # Check that the existing username does not belong to the current user
+                if existing_user.id != user_id:
+                    return make_response({"error": "Username already exists."}, 409)
+            
+            user.username = username
+            db.session.commit()
+            return make_response({"message": "Username updated successfully."}, 200)
 
-        return make_response({"message": "Password updated successfully."}, 200)
+        return make_response({"error": "No valid fields to update."}, 400)
+
+
     
     def post(self):
         user_id = session.get('user_id')

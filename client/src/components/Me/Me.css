@@ -1,3 +1,39 @@
+.update-username-section,
+.update-password-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+input[type="text"],
+input[type="password"],
+.username-input,
+.password-form input,
+.username-button,
+.password-button,
+.profile-image-button,
+.confirm-button,
+.cancel-button,
+.me-button {
+    padding: 10px;
+    margin-top: 10px;
+    width: 300px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.profile-image-button,
+.username-button,
+.password-button,
+.me-button {
+    background-color: #6c757d; /* Secondary color (grey) */
+    color: white;
+}
+
+/* Profile Picture Section */
 .profile-picture-section {
     margin-bottom: 20px;
     text-align: center;
@@ -16,29 +52,69 @@
     margin-top: 10px;
 }
 
-.update-username-section,
-.change-password-section {
-    margin-bottom: 20px;
+
+/* Form Styling */
+.password-form, .username-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 300px;
 }
-/* 
-input[type="text"],
-input[type="password"],
-button {
-    padding: 10px;
+
+.password-form input {
+    margin-bottom: 10px;
+}
+
+.password-form button {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.password-form .cancel-button,
+.username-form .cancel-button {
     margin-top: 10px;
     width: 100%;
-} */
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.password-form .cancel-button:hover,
+.username-form .cancel-button:hover {
+    background-color: #c82333;
+}
+
+.password-form .confirm-button,
+.username-form .confirm-button {
+    margin-top: 10px;
+    width: 100%;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.username-form .confirm-button:hover,
+.password-form .confirm-button:hover {
+    background-color: #218838;
+}
+
+/* Error and Success Messages */
+.error-message,
+.success-message {
+    text-align: center;
+    margin-top: 10px;
+}
 
 .error-message {
-    color: red;
-    margin-top: 20px;
+    color: #dc3545;
 }
 
 .success-message {
-    color: green;
-    margin-top: 20px;
-}
-
-.password-form {
-    margin-top: 10px;
+    color: #28a745;
 }
