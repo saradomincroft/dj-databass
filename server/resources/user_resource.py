@@ -1,7 +1,9 @@
 from flask_restful import Resource, reqparse
 from flask import request, session, make_response
+from werkzeug.utils import secure_filename
+import os
 from ..models.user import User, db
-from ..config import bcrypt
+from ..config import bcrypt, UPLOAD_FOLDER
 
 class Signup(Resource):
     def post(self):
@@ -54,6 +56,7 @@ class Logout(Resource):
         session.pop('user_id', None)
         return make_response({"message": "Logout successful"}, 200)
 
+
 class Me(Resource):
     def get(self):
         user_id = session.get('user_id')
@@ -62,6 +65,83 @@ class Me(Resource):
             if user:
                 return make_response(user.to_dict(), 200)
         return make_response({"error": "Not signed in"}, 403)
+    
+    def patch(self):
+        user_id = session.get('user_id')
+        if not user_id:
+            return make_response({"error": "Not signed in"}, 403)
+        
+        user = User.query.get(user_id)
+        if not user:
+            return make_response({"error": "User not found"}, 404)
+        
+        data = request.get_json()
+        old_password = data.get('oldPassword')
+        new_password = data.get('newPassword')
+
+        if not user.authenticate(old_password):
+            return make_response({"error": "Old password is incorrect."}, 401)
+        
+        user.hashed_password = new_password
+        db.session.commit()
+
+        return make_response({"message": "Password updated successfully."}, 200)
+    
+    def post(self):
+        user_id = session.get('user_id')
+        if not user_id:
+            return make_response({"error": "Not signed in"}, 403)
+
+        user = User.query.get(user_id)
+        if not user:
+            return make_response({"error": "User not found"}, 404)
+
+        # Upload profile image
+        if 'profileImage' in request.files:
+            file = request.files['profileImage']
+            if file.filename == '':
+                return make_response({"error": "No selected file."}, 400)
+
+            if file and self.allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                file_path = os.path.join(UPLOAD_FOLDER, filename)
+                file.save(file_path)
+
+                # Update user's profile image URL
+                user.profile_image_url = file_path
+                db.session.commit()
+
+                return make_response({"message": "Profile image uploaded successfully."}, 200)
+
+        return make_response({"error": "No image provided."}, 400)
+
+    def delete(self):
+        user_id = session.get('user_id')
+        if not user_id:
+            return make_response({"error": "Not signed in"}, 403)
+
+        user = User.query.get(user_id)
+        if not user:
+            return make_response({"error": "User not found"}, 404)
+
+        # Handle profile image deletion logic
+        if user.profile_image_url:
+            try:
+                os.remove(user.profile_image_url)  # Remove the image file
+                user.profile_image_url = None  # Clear the profile image URL
+                db.session.commit()
+
+                return make_response({"message": "Profile image deleted successfully."}, 200)
+            except Exception as e:
+                return make_response({"error": f"Failed to delete profile image: {str(e)}"}, 500)
+
+        return make_response({"error": "No profile image to delete."}, 400)
+
+    @staticmethod
+    def allowed_file(filename):
+        allowed_extensions = {'png', 'jpg', 'jpeg', 'gif'}
+        return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
+
 
 class Users(Resource):
     def get(self, user_id=None):

@@ -1,0 +1,44 @@
+.profile-picture-section {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.profile-picture {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto;
+}
+
+.profile-picture-actions {
+    margin-top: 10px;
+}
+
+.update-username-section,
+.change-password-section {
+    margin-bottom: 20px;
+}
+/* 
+input[type="text"],
+input[type="password"],
+button {
+    padding: 10px;
+    margin-top: 10px;
+    width: 100%;
+} */
+
+.error-message {
+    color: red;
+    margin-top: 20px;
+}
+
+.success-message {
+    color: green;
+    margin-top: 20px;
+}
+
+.password-form {
+    margin-top: 10px;
+}

@@ -14,62 +14,73 @@ export default function AddDjPage() {
     const [venues, setVenues] = useState([]);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [submitError, setSubmitError] = useState('');
+    const [submitSuccess, setSubmitSuccess] = useState('');
     const [suggestions, setSuggestions] = useState([]);
 
+    // To check input against list of current DJs
     useEffect(() => {
         axios.get('/api/djs')
             .then(response => setSuggestions(response.data))
-            .catch(err => console.error(err));
+            .catch(err => console.error('Failed to fetch DJs', err));
     }, []);
 
+    // Timeout for error/ success messages
     useEffect(() => {
-        if (error || success) {
+        if (error || success || submitError || submitSuccess) {
             const timer = setTimeout(() => {
                 setError('');
                 setSuccess('');
+                setSubmitError('');
+                setSubmitSuccess('');
             }, 2000);
             return () => clearTimeout(timer);
         }
-    }, [error, success]);
+    }, [error, success, submitError, submitSuccess]);
 
+    // Check if DJ name input field blank/ white space, check if DJ already exists in database
+    // Returns error/ success messages
     const checkDjExistence = () => {
         if (name.trim() === '') {
             setError('Please enter a DJ name.');
             return;
         }
 
-        const normalizedInputName = name.trim().toLowerCase();
-        const exists = suggestions.some(dj => dj.name.toLowerCase() === normalizedInputName);
+        // checks if DJ in database even if user types different case
+        const checkCaseDjName = name.trim().toLowerCase();
+        const dj = suggestions.find(dj => dj.name.toLowerCase() === checkCaseDjName);
         
-        if (exists) {
-            setError('DJ already exists');
+        if (dj) {
+            setError(`${dj.name} already exists`)
+            setSuccess('')
+            setName('')
         } else {
             setSuccess('Available')
+            setError('')
         }
     };
 
 
-
-
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        // if (error === 'DJ already exists') {
-        //     return;
-        // }
-
+    
+        // Clear previous messages
+        setSubmitError('');
+        setSubmitSuccess('');
+    
+        // Validate form fields
         if (!name.trim() || genres.length === 0 || venues.length === 0) {
-            setError('Please fill out all required fields.');
+            setSubmitError('Please fill out all required fields.');
             return;
         }
-
+    
         for (const genre of genres) {
             if (!subgenres[genre] || subgenres[genre].length === 0) {
-                setError(`Each genre must have at least one subgenre. Please add subgenres for the genre "${genre}".`);
+                setSubmitError(`Each genre must have at least one subgenre. Please add subgenres for the genre "${genre}".`);
                 return;
             }
         }
-
+    
         try {
             await axios.post('/api/dj/add', {
                 name,
@@ -78,12 +89,17 @@ export default function AddDjPage() {
                 subgenres,
                 venues,
             });
-            setSuccess('DJ added successfully!');
+            setSubmitSuccess('DJ added successfully!');
             handleClearForm();
         } catch (err) {
-            setError('Failed to add DJ.');
+            // Set error message if DJ already exists
+            setSubmitError(`Failed to add DJ, ${name} already exists in the DataBass.`);
         }
     };
+    
+    
+    
+    
 
     const handleAddGenre = () => {
         if (genreInput && !genres.includes(genreInput)) {
@@ -136,7 +152,7 @@ export default function AddDjPage() {
 
     const handleClearForm = () => {
         setName('');
-        setProduces(false);
+        setProduces('');
         setGenreInput('');
         setGenres([]);
         setSubgenres({});
@@ -144,18 +160,29 @@ export default function AddDjPage() {
         setVenues([]);
         setError('');
         setSuccess('');
+        setSubmitError('');
+        setSubmitSuccess('');
     };
+
+    const isFormValid = () => {
+        return name.trim() !== '' &&
+               produces !== '' &&
+               genres.length > 0 &&
+               venues.length > 0 &&
+               genres.every(genre => subgenres[genre] && subgenres[genre].length > 0); // Ensure each genre has at least one subgenre
+    };
+    
 
     return (
         <div className="tabcontent">
+            <h1 className="white">Add DJ Form</h1>
             <Container className="add-dj-container">
-                <h1>Add DJ</h1>
                 <Form onSubmit={handleSubmit}>
 
                     {/* Add DJ name, check if blank, check if exists in database */}
                     <Form.Group controlId="djName">
                         <Form.Label>DJ Name:</Form.Label>
-                        <InputGroup>
+                        <InputGroup className>
                             <Form.Control
                                 type="text"
                                 value={name}
@@ -173,18 +200,23 @@ export default function AddDjPage() {
                         </Form.Group>
                     </Form.Group>
                     
-
-
-
-
+                    {/* Add music production status via dropdown */}
                     <Form.Group controlId="producesMusic">
-                        <Form.Check 
-                            type="checkbox" 
-                            label="Produces Music?" 
-                            checked={produces}
-                            onChange={(e) => setProduces(e.target.checked)}
-                        />
+                        <Form.Label>Music Production Status:</Form.Label>
+                        <Form.Control
+                            as="select"
+                            value={produces}
+                            onChange={(e) => setProduces(e.target.value)}
+                            required // Make the field required
+                        >
+                            <option value="" disabled>Please select an option</option> {/* Placeholder option */}
+                            <option value="No">Non-Producer</option>
+                            <option value="Yes">Producer</option>
+                        </Form.Control>
+                        <Form.Group className="form-messages"> {/* Keep this in for space styling */}
+                        </Form.Group>
                     </Form.Group>
+
 
                     <Form.Group controlId="genres">
                         <Form.Label>Genres:</Form.Label>
@@ -235,12 +267,31 @@ export default function AddDjPage() {
                             </div>
                         ))}
                     </Form.Group>
-
-
-
-                    <Button variant="primary" type="submit">Add DJ</Button>
-                    <Button variant="secondary" onClick={handleClearForm} className="ms-2">Clear Form</Button>
+                    
+                    <Button
+                    variant="primary"
+                    type="submit"
+                    disabled={!isFormValid()} // Disable button if form is not valid
+                    >
+                        Add DJ
+                    </Button>
+                    <Button
+                        variant="secondary"
+                        onClick={handleClearForm}
+                        className="ms-2"
+                    >
+                        Clear Form
+                    </Button>
+                    <Form.Group className="form-messages mt-3">
+                        {submitError && (
+                            <div className="text-error">{submitError}</div>
+                        )}
+                        {submitSuccess && (
+                            <div className="text-success">{submitSuccess}</div>
+                        )}
+                    </Form.Group>
                 </Form>
+
             </Container>
         </div>
     );
