@@ -13,7 +13,6 @@ export default function Me() {
     const [confirmNewPassword, setConfirmNewPassword] = useState('');
     const [showPasswordForm, setShowPasswordForm] = useState(false);
     const [showUsernameUpdate, setShowUsernameUpdate] = useState(false);
-    const [showUsernameConfirmation, setShowUsernameConfirmation] = useState(false);
 
     useEffect(() => {
         fetchUserData();
@@ -36,6 +35,14 @@ export default function Me() {
             setSuccessMessage(null);
         }, 2000);
     };
+
+    const clearForms = () => {
+        setUsername('');
+        setOldPassword('');
+        setNewPassword('');
+        setConfirmNewPassword('');
+    };
+
 
     const handleProfileImageChange = (e) => {
         setProfileImage(e.target.files[0]);
@@ -72,6 +79,7 @@ export default function Me() {
         if (!username.trim()) {
             setError('Username cannot be blank.');
             clearMessagesAfterTimeout();
+            clearForms();
             return;
         }
 
@@ -95,16 +103,21 @@ export default function Me() {
             }
             console.error('Error updating username:', error);
             clearMessagesAfterTimeout();
+            clearForms();
         }
     };
 
     const handlePasswordChange = async () => {
         if (!oldPassword.trim() || !newPassword.trim() || !confirmNewPassword.trim()) {
             setError('Please fill out all password fields.');
+            clearMessagesAfterTimeout();
+            clearForms();
             return;
         }
         if (newPassword !== confirmNewPassword) {
             setError('New passwords do not match.');
+            clearMessagesAfterTimeout();
+            clearForms();
             return;
         }
 
@@ -118,9 +131,13 @@ export default function Me() {
             setConfirmNewPassword('');
             setSuccessMessage(response.data.message || 'Password updated successfully.');
             setShowPasswordForm(false);
+            clearMessagesAfterTimeout();
+            clearForms();
         } catch (error) {
             if (error.response && error.response.status === 401) {
                 setError('Old password is incorrect.');
+                clearMessagesAfterTimeout();
+                clearForms();
             } else {
                 setError('Failed to change password.');
             }
@@ -130,12 +147,14 @@ export default function Me() {
 
     const togglePasswordForm = () => {
         setShowPasswordForm(!showPasswordForm);
+        setShowUsernameUpdate(false); // Ensure username update form is closed
         setError(null);
         setSuccessMessage(null);
     };
 
     const toggleUsernameUpdate = () => {
         setShowUsernameUpdate(!showUsernameUpdate);
+        setShowPasswordForm(false); // Ensure password form is closed
         setError(null);
         setSuccessMessage(null);
     };
@@ -148,7 +167,7 @@ export default function Me() {
             <div className="profile-picture-section">
                 <img
                     src={user?.profileImageUrl || '/img/default-profile.jpg'}
-                    alt="Profile Image"
+                    alt="Profile"
                     className="profile-picture"
                 />
                 <div className="profile-picture-actions">
