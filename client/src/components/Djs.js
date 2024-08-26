@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
@@ -15,25 +15,8 @@ export default function Djs() {
     const [selectedSubgenre, setSelectedSubgenre] = useState('');
     const [selectedVenue, setSelectedVenue] = useState('');
 
-    useEffect(() => {
-        fetchAllDjs();
-        fetchGenres();
-        fetchVenues();
-    }, []);
-
-    useEffect(() => {
-        if (selectedGenre) {
-            fetchSubgenres();
-        } else {
-            setSubgenres([]); // Clear subgenres if no genre is selected
-        }
-    }, [selectedGenre]);
-
-    useEffect(() => {
-        filterDjs();
-    }, [search, selectedGenre, selectedSubgenre, selectedVenue]);
-
-    const fetchAllDjs = async () => {
+    // Define fetch functions
+    const fetchAllDjs = useCallback(async () => {
         try {
             const response = await axios.get('/api/djs');
             setAllDjs(response.data);
@@ -43,9 +26,9 @@ export default function Djs() {
             setError('Error fetching DJs');
             console.error('Error fetching DJs:', error);
         }
-    };
+    }, []);
 
-    const fetchGenres = async () => {
+    const fetchGenres = useCallback(async () => {
         try {
             const response = await axios.get('/api/genres');
             setGenres(response.data);
@@ -53,9 +36,9 @@ export default function Djs() {
             setError('Error fetching genres');
             console.error('Error fetching genres:', error);
         }
-    };
+    }, []);
 
-    const fetchSubgenres = async () => {
+    const fetchSubgenres = useCallback(async () => {
         try {
             const response = await axios.get(`/api/genres/${encodeURIComponent(selectedGenre)}/subgenres`);
             setSubgenres(response.data);
@@ -63,19 +46,36 @@ export default function Djs() {
             setError('Error fetching subgenres');
             console.error('Error fetching subgenres:', error);
         }
-    };
+    }, [selectedGenre]);
 
-    const fetchVenues = async () => {
+    const fetchVenues = useCallback(async () => {
         try {
             const response = await axios.get('/api/venues');
-            console.log('Fetched venues:', response.data); // Log the fetched venues
+            console.log('Fetched venues:', response.data);
             setVenues(response.data);
         } catch (error) {
             setError('Error fetching venues');
             console.error('Error fetching venues:', error);
         }
-    };
-    
+    }, []);
+
+    useEffect(() => {
+        fetchAllDjs();
+        fetchGenres();
+        fetchVenues();
+    }, [fetchAllDjs, fetchGenres, fetchVenues]);
+
+    useEffect(() => {
+        if (selectedGenre) {
+            fetchSubgenres();
+        } else {
+            setSubgenres([]);
+        }
+    }, [selectedGenre, fetchSubgenres]);
+
+    useEffect(() => {
+        filterDjs();
+    }, [search, selectedGenre, selectedSubgenre, selectedVenue, allDjs]);
 
     const filterDjs = () => {
         let filtered = allDjs;
@@ -133,7 +133,7 @@ export default function Djs() {
         setSelectedSubgenre('');
         setSelectedVenue('');
         setSubgenres([]);
-        setFilteredDjs(allDjs); // Reset filtered DJs to the original list
+        setFilteredDjs(allDjs);
     };
 
     return (
