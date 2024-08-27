@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import ProfilePictureEditor from '../ProfilePictureEditor/ProfilePictureEditor';
 import './Me.css';
 
 export default function Me() {
     const [user, setUser] = useState(null);
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null);
-    const [profileImage, setProfileImage] = useState(null);
+    // const [profileImage, setProfileImage] = useState(null);
     const [username, setUsername] = useState('');
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -44,36 +45,36 @@ export default function Me() {
     };
 
 
-    const handleProfileImageChange = (e) => {
-        setProfileImage(e.target.files[0]);
-    };
+    // const handleProfileImageChange = (e) => {
+    //     setProfileImage(e.target.files[0]);
+    // };
 
-    const handleProfileImageUpload = async () => {
-        if (!profileImage) return;
+    // const handleProfileImageUpload = async () => {
+    //     if (!profileImage) return;
 
-        const formData = new FormData();
-        formData.append('profileImage', profileImage);
+    //     const formData = new FormData();
+    //     formData.append('profileImage', profileImage);
 
-        try {
-            await axios.post('http://localhost:4000/api/me/upload', formData, { withCredentials: true });
-            setSuccessMessage('Profile image uploaded successfully.');
-            fetchUserData();
-        } catch (error) {
-            setError('Failed to upload profile image.');
-            console.error('Error uploading profile image:', error);
-        }
-    };
+    //     try {
+    //         await axios.post('http://localhost:4000/api/me/upload', formData, { withCredentials: true });
+    //         setSuccessMessage('Profile image uploaded successfully.');
+    //         fetchUserData();
+    //     } catch (error) {
+    //         setError('Failed to upload profile image.');
+    //         console.error('Error uploading profile image:', error);
+    //     }
+    // };
 
-    const handleProfileImageDelete = async () => {
-        try {
-            await axios.delete('http://localhost:4000/api/me/delete-profile-image', { withCredentials: true });
-            setSuccessMessage('Profile image deleted successfully.');
-            fetchUserData();
-        } catch (error) {
-            setError('Failed to delete profile image.');
-            console.error('Error deleting profile image:', error);
-        }
-    };
+    // const handleProfileImageDelete = async () => {
+    //     try {
+    //         await axios.delete('http://localhost:4000/api/me/delete-profile-image', { withCredentials: true });
+    //         setSuccessMessage('Profile image deleted successfully.');
+    //         fetchUserData();
+    //     } catch (error) {
+    //         setError('Failed to delete profile image.');
+    //         console.error('Error deleting profile image:', error);
+    //     }
+    // };
 
     const handleUsernameUpdate = async () => {
         if (!username.trim()) {
@@ -164,18 +165,8 @@ export default function Me() {
             <h1>{user ? user.username : 'Loading...'}</h1>
 
             {/* Profile Picture Section */}
-            <div className="profile-picture-section">
-                <img
-                    src={user?.profileImageUrl || '/img/default-profile.jpg'}
-                    alt="Profile"
-                    className="profile-picture"
-                />
-                <div className="profile-picture-actions">
-                    <input type="file" onChange={handleProfileImageChange} />
-                    <button className="profile-image-button" onClick={handleProfileImageUpload}>Upload Profile Picture</button>
-                    <button className="profile-image-button" onClick={handleProfileImageDelete}>Delete Profile Picture</button>
-                </div>
-            </div>
+            <ProfilePictureEditor user={user} fetchUserData={fetchUserData} />
+
 
             {/* Display Admin status (or blank for non-admins) */}
             <h2>{user?.is_admin ? 'Admin User' : ''}</h2>

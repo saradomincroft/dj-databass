@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Djs.css';
 
-export default function Djs( {userId}) {
+export default function Djs() {
     const [allDjs, setAllDjs] = useState([]);
     const [filteredDjs, setFilteredDjs] = useState([]);
     const [search, setSearch] = useState('');
@@ -12,7 +12,6 @@ export default function Djs( {userId}) {
     const [genres, setGenres] = useState([]);
     const [subgenres, setSubgenres] = useState([]);
     const [venues, setVenues] = useState([]);
-    const [produces, setProduces] = useState([]);
     const [selectedGenre, setSelectedGenre] = useState('');
     const [selectedSubgenre, setSelectedSubgenre] = useState('');
     const [selectedVenue, setSelectedVenue] = useState('');
@@ -66,26 +65,15 @@ export default function Djs( {userId}) {
         }
     }, []);
 
-    const fetchProduces = useCallback(async () => {
-        try {
-            const response = await axios.get('/api/produces');
-            setProduces(response.data);
-        } catch (error) {
-            setError('Error fetching produces');
-            console.error('Error fetching produces:', error);
-        }
-    }, []);
-
     const fetchFavourites = useCallback(async () => {
         try {
-            const response = await axios.get(`/api/me/favourites`);
+            const response = await axios.get('/api/me/favourites');
             setFavourites(response.data.favourites || []);
         } catch (error) {
             setError('Error fetching favourites');
             console.error('Error fetching favourites:', error);
         }
-    }, [userId]);
-    
+    }, []);
 
     const filterDjs = useCallback(() => {
         let filtered = allDjs;
@@ -109,8 +97,7 @@ export default function Djs( {userId}) {
         }
 
         if (selectedProduces) {
-            // Handle filtering based on the produce status
-            const isProducing = selectedProduces === "Yes";
+            const isProducing = selectedProduces === 'Yes';
             filtered = filtered.filter(dj => dj.produces === isProducing);
         }
 
@@ -121,9 +108,8 @@ export default function Djs( {userId}) {
         fetchAllDjs();
         fetchGenres();
         fetchVenues();
-        fetchProduces();
         fetchFavourites();
-    }, [fetchAllDjs, fetchGenres, fetchVenues, fetchProduces, fetchFavourites]);
+    }, [fetchAllDjs, fetchGenres, fetchVenues, fetchFavourites]);
 
     useEffect(() => {
         fetchSubgenres();
@@ -152,7 +138,6 @@ export default function Djs( {userId}) {
         setSelectedSubgenre('');
         setSelectedVenue('');
         setSelectedProduces('');
-        setSubgenres([]);
         setFilteredDjs(allDjs);
     };
 
@@ -160,10 +145,10 @@ export default function Djs( {userId}) {
         try {
             const isFavourite = favourites.some(fav => fav.id === dj.id);
             if (isFavourite) {
-                await axios.delete(`/api/me/favourites`, { data: { dj_id: dj.id } }); // Updated to /me/favourites
+                await axios.delete('/api/me/favourites', { data: { dj_id: dj.id } });
                 setFavourites(prevFavourites => prevFavourites.filter(fav => fav.id !== dj.id));
             } else {
-                await axios.post(`/api/me/favourites`, { dj_id: dj.id }); // Updated to /me/favourites
+                await axios.post('/api/me/favourites', { dj_id: dj.id });
                 setFavourites(prevFavourites => [...prevFavourites, dj]);
             }
         } catch (error) {
@@ -175,7 +160,7 @@ export default function Djs( {userId}) {
     const isFavourite = (dj) => favourites.some(fav => fav.id === dj.id);
 
     return (
-        <div id="Home" className="tabcontent">
+        <div id="Djs" className="tabcontent">
             <div className="container-fluid">
                 <div className="row">
                     <div className="col-md-6">
@@ -188,10 +173,12 @@ export default function Djs( {userId}) {
                                         <li key={dj.id} className="list-group-item d-flex justify-content-between align-items-center">
                                             <Link to={`/dj/${dj.id}`}>{dj.name}</Link>
                                             <button
-                                                className="btn btn-outline-primary"
+                                                className="btn heart-container"
                                                 onClick={() => handleToggleFavourite(dj)}
                                             >
-                                                {isFavourite(dj) ? '❤️' : '♡'}
+                                                <span className={`favourite-icon ${isFavourite(dj) ? 'filled' : ''}`}>
+                                                    {isFavourite(dj) ? '❤️' : '♡'}
+                                                </span>
                                             </button>
                                         </li>
                                     ))}
@@ -199,7 +186,6 @@ export default function Djs( {userId}) {
                             </div>
                         </div>
                     </div>
-
                     <div className="col-md-6">
                         <div className="scrollable-container">
                             <div className="filter-controls form-controls-container">
@@ -220,7 +206,6 @@ export default function Djs( {userId}) {
                                     <option value="Yes">Yes</option>
                                     <option value="No">No</option>
                                 </select>
-
                                 <div className="mb-3">
                                     <select
                                         id="genre"
@@ -236,67 +221,70 @@ export default function Djs( {userId}) {
                                         ))}
                                     </select>
                                 </div>
-                                <div className="mb-3">
-                                    <select
-                                        id="subgenre"
-                                        className="form-select"
-                                        value={selectedSubgenre}
-                                        onChange={handleSubgenreChange}
-                                        disabled={!selectedGenre}
-                                    >
-                                        <option value="">Select Subgenre</option>
-                                        {subgenres.map(subgenre => (
-                                            <option key={subgenre.id} value={subgenre.subtitle}>
-                                                {subgenre.subtitle}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div className="mb-3">
-                                    <select
-                                        id="venue"
-                                        className="form-select"
-                                        value={selectedVenue}
-                                        onChange={handleVenueChange}
-                                    >
-                                        <option value="">Select Venue</option>
-                                        {venues.map(venue => (
-                                            <option key={venue.id} value={venue.venuename}>
-                                                {venue.venuename}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <button className="btn btn-secondary" onClick={handleClear}>
-                                    Clear Filters
-                                </button>
+                            <div className="mb-3">
+                                <select
+                                    id="subgenre"
+                                    className="form-select"
+                                    value={selectedSubgenre}
+                                    onChange={handleSubgenreChange}
+                                    disabled={!selectedGenre}
+                                >
+                                    <option value="">Select Subgenre</option>
+                                    {subgenres.map(subgenre => (
+                                        <option key={subgenre.id} value={subgenre.subtitle}>
+                                            {subgenre.subtitle}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
+                            <div className="mb-3">
+                                <select
+                                    id="venue"
+                                    className="form-select"
+                                    value={selectedVenue}
+                                    onChange={handleVenueChange}
+                                >
+                                    <option value="">Select Venue</option>
+                                    {venues.map(venue => (
+                                        <option key={venue.id} value={venue.venuename}>
+                                            {venue.venuename}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <button className="btn btn-secondary" onClick={handleClear}>
+                                Clear Filters
+                            </button>
+                    </div>
 
-                            <div className="dj-list">
-                                <h2>DJ List</h2>
-                                {error && <p className="text-danger">{error}</p>}
-                                {filteredDjs.length === 0 ? (
-                                    <p>No DJs found</p>
-                                ) : (
-                                    <ul className="list-group">
-                                        {filteredDjs.map(dj => (
-                                            <li key={dj.id} className="list-group-item d-flex justify-content-between align-items-center">
-                                                <Link to={`/dj/${dj.id}`}>{dj.name}</Link>
-                                                <button
-                                                    className="btn btn-outline-primary"
-                                                    onClick={() => handleToggleFavourite(dj)}
-                                                >
-                                                    {isFavourite(dj) ? '❤️' : '♡'}
-                                                </button>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
-                            </div>
-                        </div>
+                    <div className="dj-list">
+                        <h2>DJ List</h2>
+                        {error && <p className="text-danger">{error}</p>}
+                        {filteredDjs.length === 0 ? (
+                            <p>No DJs found</p>
+                        ) : (
+                            <ul className="list-group">
+                                {filteredDjs.map(dj => (
+                                    <li key={dj.id} className="list-group-item d-flex justify-content-between align-items-center">
+                                        <Link to={`/dj/${dj.id}`}>{dj.name}</Link>
+                                        <button
+                                            className="btn heart-container"
+                                            onClick={() => handleToggleFavourite(dj)}
+                                        >
+                                            <span className={`favourite-icon ${isFavourite(dj) ? 'filled' : ''}`}>
+                                                {isFavourite(dj) ? '❤️' : '♡'}
+                                            </span>
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+                </div>
                     </div>
                 </div>
             </div>
         </div>
+
     );
 }

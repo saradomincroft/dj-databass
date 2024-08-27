@@ -1,3 +1,5 @@
+/* src/components/Me/Me.css */
+
 .update-username-section,
 .update-password-section {
     display: flex;
@@ -31,25 +33,6 @@ input[type="password"],
 .me-button {
     background-color: #6c757d; /* Secondary color (grey) */
     color: white;
-}
-
-/* Profile Picture Section */
-.profile-picture-section {
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-.profile-picture {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    object-fit: cover;
-    display: block;
-    margin: 0 auto;
-}
-
-.profile-picture-actions {
-    margin-top: 10px;
 }
 
 

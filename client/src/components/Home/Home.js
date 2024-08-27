@@ -1,17 +1,44 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import Djs from '../Djs/Djs';
 import './Home.css';
 
-export default function Home({ onLogout, userId }) {
+export default function Home({ onLogout }) {
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        // Fetch user data
+        const fetchUser = async () => {
+            try {
+                const response = await axios.get('/api/me', { withCredentials: true }); // Adjust the endpoint as needed
+                setUser(response.data);
+            } catch (error) {
+                console.error('Error fetching user:', error);
+            }
+        };
+
+        fetchUser();
+    }, []);
+
+    if (!user) {
+        return <div>Loading...</div>;
+    }
+
     return (
         <div id="Home" className="tabcontent">
             <div className="header">
-                <h1 className="white">Home Page</h1>
+                <div className="profile-picture-section">
+                    <img
+                        src={user.profileImageUrl || '/img/default-profile.jpg'}
+                        alt="Profile"
+                        className="profile-picture"
+                    />
+                    <h1 className="white">Welcome, {user.username}</h1>
+                </div>
                 <button className="home-button" onClick={onLogout}>Logout</button>
             </div>
 
-            <Djs userId={userId} />
-
+            <Djs />
         </div>
     );
 }

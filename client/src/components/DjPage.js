@@ -50,7 +50,7 @@ export default function DjPage() {
     if (!dj) return <p>Loading...</p>;
 
     return (
-        <div>
+        <div className="tabcontent">
             <h1>{dj.name}</h1>
             <p><strong>Produces:</strong> {dj.produces ? 'Yes' : 'No'}</p>
             <p>
@@ -82,7 +82,7 @@ export default function DjPage() {
                 </div>
             )}
             
-            <button onClick={() => navigate('/djs')}>Back to DJs</button>
+            <button onClick={() => navigate('/home')}>Home</button>
         </div>
     );
 }
