@@ -9,10 +9,10 @@
 }
 
 .tabcontent {
+  background-image: url('/public/img/bg.jpg');
   height: 100vh;
   display: flex;
   justify-content: flex-start;
-  align-items: center;
   flex-direction: column;
   padding-top: 80px;
 }

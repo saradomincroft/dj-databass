@@ -7,7 +7,7 @@ import Home from './components/Home/Home';
 import Signup from './components/Signup';
 import Me from './components/Me/Me';
 import AddDjPage from './components/AddDjPage/AddDjPage';
-import Djs from './components/Djs';
+import Djs from './components/Djs/Djs';
 import DjPage from './components/DjPage';
 
 
