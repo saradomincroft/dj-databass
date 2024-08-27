@@ -1,6 +1,16 @@
 from server.config import db, bcrypt
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy import Table, Column, Integer, ForeignKey
+from sqlalchemy.orm import relationship
+
+# Association table
+user_dj_favourites = Table(
+    'user_dj_favourites',
+    db.metadata,
+    db.Column('user_id', Integer, ForeignKey('users.id')),
+    db.Column('dj_id', Integer, ForeignKey('djs.id'))
+)
 
 class User(db.Model, SerializerMixin):
     __tablename__ = "users"
@@ -9,6 +19,9 @@ class User(db.Model, SerializerMixin):
     username = db.Column(db.String, nullable=False, unique=True)
     is_admin = db.Column(db.Boolean, default=False)
     _hashed_password = db.Column(db.String, nullable=False)
+
+    favourites = relationship('Dj', secondary=user_dj_favourites, backref='users')
+
 
     @hybrid_property
     def hashed_password(self):
