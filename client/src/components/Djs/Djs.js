@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Djs.css';
 
-export default function Djs() {
+export default function Djs( {userId}) {
     const [allDjs, setAllDjs] = useState([]);
     const [filteredDjs, setFilteredDjs] = useState([]);
     const [search, setSearch] = useState('');
@@ -76,6 +76,17 @@ export default function Djs() {
         }
     }, []);
 
+    const fetchFavourites = useCallback(async () => {
+        try {
+            const response = await axios.get(`/api/users/${userId}/favourites`); // Ensure userId is defined
+            setFavourites(response.data.favourites); // Adjust based on response structure
+        } catch (error) {
+            setError('Error fetching favourites');
+            console.error('Error fetching favourites:', error);
+        }
+    }, [userId]);
+    
+
     const filterDjs = useCallback(() => {
         let filtered = allDjs;
 
@@ -111,7 +122,8 @@ export default function Djs() {
         fetchGenres();
         fetchVenues();
         fetchProduces();
-    }, [fetchAllDjs, fetchGenres, fetchVenues, fetchProduces]);
+        fetchFavourites();
+    }, [fetchAllDjs, fetchGenres, fetchVenues, fetchProduces, fetchFavourites]);
 
     useEffect(() => {
         fetchSubgenres();
@@ -144,15 +156,23 @@ export default function Djs() {
         setFilteredDjs(allDjs);
     };
 
-    const handleToggleFavourite = (dj) => {
-        setFavourites(prevFavourites => {
-            const isFavourite = prevFavourites.find(fav => fav.id === dj.id);
+    const handleToggleFavourite = async (dj) => {
+        try {
+            const isFavourite = favourites.some(fav => fav.id === dj.id);
             if (isFavourite) {
-                return prevFavourites.filter(fav => fav.id !== dj.id);
+                await axios.delete(`/api/users/${userId}/favourites`, { data: { dj_id: dj.id } }); // Adjust endpoint and data structure
+                setFavourites(prevFavourites => prevFavourites.filter(fav => fav.id !== dj.id));
+            } else {
+                await axios.post(`/api/users/${userId}/favourites`, { dj_id: dj.id }); // Adjust endpoint
+                setFavourites(prevFavourites => [...prevFavourites, dj]);
             }
-            return [...prevFavourites, dj];
-        });
+        } catch (error) {
+            setError('Error updating favourites');
+            console.error('Error updating favourites:', error);
+        }
     };
+    
+    
 
     const isFavourite = (dj) => favourites.some(fav => fav.id === dj.id);
 

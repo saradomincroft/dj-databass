@@ -2,8 +2,10 @@ from server.config import db, bcrypt
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy import Column, String, Integer, Boolean, ForeignKey
-from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
+from .user import user_dj_favourites
+
 
 # Base = declarative_base()
 
@@ -13,6 +15,8 @@ class Dj(db.Model, SerializerMixin):
     id = Column(Integer(), primary_key=True)
     name = Column(String(), nullable=False)
     produces = Column(Boolean(), nullable=False)
+
+    # users = relationship('User', secondary=user_dj_favourites, backref='favourites')
 
     dj_genres = relationship("DjGenre", back_populates="dj")
     genres = association_proxy("dj_genres", "genre", creator=lambda g: DjGenre(genre=g))

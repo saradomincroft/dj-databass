@@ -4,6 +4,8 @@ from werkzeug.utils import secure_filename
 import os
 from server.models.user import User, db
 from server.config import bcrypt, UPLOAD_FOLDER
+from server.models.dj import Dj
+
 
 class Signup(Resource):
     def post(self):
@@ -223,3 +225,69 @@ class Users(Resource):
         return make_response({'error': 'You do not have admin access to delete other users'}, 403)
     
 
+class Favourites(Resource):
+    def get(self):
+        user_id = session.get('user_id')
+        if not user_id:
+            return make_response({"error": "Not signed in"}, 403)
+
+        user = User.query.get(user_id)
+        if user:
+            favourites = [{'id': dj.id, 'name': dj.name} for dj in user.favourites]
+            return {'favourites': favourites}, 200
+        return make_response({"error": "User not found"}, 404)
+
+    
+    def post(self):
+        user_id = session.get('user_id')
+        if not user_id:
+            return make_response({"error": "Not signed in"}, 403)
+
+        user = User.query.get(user_id)
+        if not user:
+            return make_response({"error": "User not found"}, 404)
+
+        data = request.get_json()
+        dj_id = data.get('dj_id')
+        
+        if not dj_id:
+            return make_response({"error": "DJ ID is required"}, 400)
+
+        dj = Dj.query.get(dj_id)
+        if not dj:
+            return make_response({"error": "DJ not found"}, 404)
+
+        if dj in user.favourites:
+            return make_response({"message": "DJ is already in favourites"}, 400)
+
+        user.favourites.append(dj)
+        db.session.commit()
+
+        return make_response({"message": "DJ added to favourites"}, 200)
+
+    def delete(self):
+        user_id = session.get('user_id')
+        if not user_id:
+            return make_response({"error": "Not signed in"}, 403)
+
+        user = User.query.get(user_id)
+        if not user:
+            return make_response({"error": "User not found"}, 404)
+
+        data = request.get_json()
+        dj_id = data.get('dj_id')
+
+        if not dj_id:
+            return make_response({"error": "DJ ID is required"}, 400)
+
+        dj = Dj.query.get(dj_id)
+        if not dj:
+            return make_response({"error": "DJ not found"}, 404)
+
+        if dj not in user.favourites:
+            return make_response({"error": "DJ is not in favourites"}, 400)
+
+        user.favourites.remove(dj)
+        db.session.commit()
+
+        return make_response({"message": "DJ removed from favourites"}, 200)

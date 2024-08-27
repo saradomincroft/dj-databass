@@ -1,27 +1,27 @@
 from server.config import db, bcrypt
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy import Table, Column, Integer, ForeignKey
+from sqlalchemy import Column, String, Integer, Boolean, ForeignKey, Table
 from sqlalchemy.orm import relationship
 
-# Association table
+# Association table for many-to-many relationship between User and Dj
 user_dj_favourites = Table(
     'user_dj_favourites',
     db.metadata,
-    db.Column('user_id', Integer, ForeignKey('users.id')),
-    db.Column('dj_id', Integer, ForeignKey('djs.id'))
+    Column('user_id', Integer, ForeignKey('users.id')),
+    Column('dj_id', Integer, ForeignKey('djs.id'))
 )
 
 class User(db.Model, SerializerMixin):
     __tablename__ = "users"
 
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String, nullable=False, unique=True)
-    is_admin = db.Column(db.Boolean, default=False)
-    _hashed_password = db.Column(db.String, nullable=False)
+    id = Column(Integer, primary_key=True)
+    username = Column(String, nullable=False, unique=True)
+    is_admin = Column(Boolean, default=False)
+    _hashed_password = Column(String, nullable=False)
 
+    # Many-to-many relationship with Dj
     favourites = relationship('Dj', secondary=user_dj_favourites, backref='users')
-
 
     @hybrid_property
     def hashed_password(self):
@@ -35,5 +35,19 @@ class User(db.Model, SerializerMixin):
     def authenticate(self, password):
         return bcrypt.check_password_hash(self._hashed_password, password.encode('utf-8'))
     
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'username': self.username,
+            'is_admin': self.is_admin,
+            'favourites': [self.serialize_favourites(dj) for dj in self.favourites] if self.favourites else []
+        }
+    
+    def serialize_favourites(self, dj):
+        return {
+            'id': dj.id,
+            'name': dj.name,
+        }
+
     def __repr__(self):
         return f"<User {self.id}: {self.username}>"
