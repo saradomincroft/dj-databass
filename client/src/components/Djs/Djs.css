@@ -31,7 +31,7 @@
 .dj-list {
     padding: 20px 30px; /* 20px top and bottom, 30px left and right */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    max-height: 500px; /* Set maximum height for scrolling */
+    height: 300px; /* Set maximum height for scrolling */
     overflow-y: auto; /* Enable vertical scrolling */
 }
 
@@ -48,7 +48,7 @@
 .favourites {
     padding: 20px 30px; /* 20px top and bottom, 30px left and right */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    max-height: 500px; /* Set maximum height for scrolling */
+    height: 400px; /* Set maximum height for scrolling */
     overflow-y: auto; /* Enable vertical scrolling */
     display: flex;
     flex-direction: column;

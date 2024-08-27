@@ -78,8 +78,8 @@ export default function Djs( {userId}) {
 
     const fetchFavourites = useCallback(async () => {
         try {
-            const response = await axios.get(`/api/users/${userId}/favourites`); // Ensure userId is defined
-            setFavourites(response.data.favourites); // Adjust based on response structure
+            const response = await axios.get(`/api/me/favourites`);
+            setFavourites(response.data.favourites || []);
         } catch (error) {
             setError('Error fetching favourites');
             console.error('Error fetching favourites:', error);
@@ -137,7 +137,7 @@ export default function Djs( {userId}) {
 
     const handleGenreChange = (event) => {
         setSelectedGenre(event.target.value);
-        setSelectedSubgenre(''); // Reset subgenre when genre changes
+        setSelectedSubgenre('');
     };
 
     const handleSubgenreChange = (event) => setSelectedSubgenre(event.target.value);
@@ -160,10 +160,10 @@ export default function Djs( {userId}) {
         try {
             const isFavourite = favourites.some(fav => fav.id === dj.id);
             if (isFavourite) {
-                await axios.delete(`/api/users/${userId}/favourites`, { data: { dj_id: dj.id } }); // Adjust endpoint and data structure
+                await axios.delete(`/api/me/favourites`, { data: { dj_id: dj.id } }); // Updated to /me/favourites
                 setFavourites(prevFavourites => prevFavourites.filter(fav => fav.id !== dj.id));
             } else {
-                await axios.post(`/api/users/${userId}/favourites`, { dj_id: dj.id }); // Adjust endpoint
+                await axios.post(`/api/me/favourites`, { dj_id: dj.id }); // Updated to /me/favourites
                 setFavourites(prevFavourites => [...prevFavourites, dj]);
             }
         } catch (error) {
@@ -171,8 +171,6 @@ export default function Djs( {userId}) {
             console.error('Error updating favourites:', error);
         }
     };
-    
-    
 
     const isFavourite = (dj) => favourites.some(fav => fav.id === dj.id);
 
