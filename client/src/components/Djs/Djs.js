@@ -162,31 +162,6 @@ export default function Djs() {
     return (
         <div id="Djs" className="tabcontent">
             <div className="container-fluid">
-                <div className="row">
-                    <div className="col-md-6">
-                        <div className="scrollable-container">
-                            <div className="favourites">
-                                <h2>Favourites</h2>
-                                {favourites.length === 0 && <p>No favourites yet</p>}
-                                <ul className="list-group">
-                                    {favourites.map(dj => (
-                                        <li key={dj.id} className="list-group-item d-flex justify-content-between align-items-center">
-                                            <Link to={`/dj/${dj.id}`}>{dj.name}</Link>
-                                            <button
-                                                className="btn heart-container"
-                                                onClick={() => handleToggleFavourite(dj)}
-                                            >
-                                                <span className={`favourite-icon ${isFavourite(dj) ? 'filled' : ''}`}>
-                                                    {isFavourite(dj) ? '❤️' : '♡'}
-                                                </span>
-                                            </button>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-md-6">
                         <div className="scrollable-container">
                             <div className="filter-controls form-controls-container">
                                 <input
@@ -266,7 +241,14 @@ export default function Djs() {
                             <ul className="list-group">
                                 {filteredDjs.map(dj => (
                                     <li key={dj.id} className="list-group-item d-flex justify-content-between align-items-center">
-                                        <Link to={`/dj/${dj.id}`}>{dj.name}</Link>
+                                        <div>
+                                            <Link to={`/dj/${dj.id}`}>{dj.name}</Link>
+                                            {dj.genres && dj.genres.length > 0 && (
+                                                <span className="dj-genres">
+                                                    {' | ' + dj.genres.join(' | ')}
+                                                </span>
+                                            )}
+                                        </div>
                                         <button
                                             className="btn heart-container"
                                             onClick={() => handleToggleFavourite(dj)}
@@ -279,8 +261,6 @@ export default function Djs() {
                                 ))}
                             </ul>
                         )}
-                    </div>
-                </div>
                     </div>
                 </div>
             </div>

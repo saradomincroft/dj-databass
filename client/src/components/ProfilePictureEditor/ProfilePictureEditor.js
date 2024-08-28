@@ -20,6 +20,7 @@ export default function ProfilePictureEditor({ user, fetchUserData }) {
 
     const handleProfileImageChange = (e) => {
         setProfileImage(e.target.files[0]);
+        console.log('Selected File:', e.target.files[0]);
     };
 
     const handleProfileImageUpload = async () => {
@@ -32,9 +33,16 @@ export default function ProfilePictureEditor({ user, fetchUserData }) {
         formData.append('profileImage', profileImage);
 
         try {
-            const response = await axios.post('/api/me/upload', formData, { withCredentials: true });
+            console.log('Uploading File:', profileImage);
+            const response = await axios.post('/api/me/user-profiles', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+                withCredentials: true,
+            });
+            console.log('Upload Response:', response.data);
             setSuccessMessage('Profile image uploaded successfully.');
-            await fetchUserData(); // Fetch updated user data
+            await fetchUserData();
             setIsEditing(false);
         } catch (error) {
             const errorMessage = error.response?.data?.error || 'Failed to upload profile image.';
@@ -45,9 +53,10 @@ export default function ProfilePictureEditor({ user, fetchUserData }) {
 
     const handleProfileImageDelete = async () => {
         try {
-            await axios.delete('/api/me/delete-profile-image', { withCredentials: true });
+            const response = await axios.delete('/api/me/delete-profile-image', { withCredentials: true });
+            console.log('Delete Response:', response.data);
             setSuccessMessage('Profile image deleted successfully.');
-            await fetchUserData(); // Refresh user data to update profile image URL
+            await fetchUserData();
             setIsEditing(false);
         } catch (error) {
             const errorMessage = error.response?.data?.error || 'Failed to delete profile image.';
@@ -60,7 +69,7 @@ export default function ProfilePictureEditor({ user, fetchUserData }) {
         <div className="profile-picture-container">
             <div className="profile-picture-img">
                 <img
-                    src={user?.profileImageUrl ? `/uploads/${user.profileImageUrl}?t=${new Date().getTime()}` : '/img/default-profile.jpg'}
+                    src={user?.profileImageUrl ? `/me/user-profiles/${user.profileImageUrl}?t=${new Date().getTime()}` : '/img/default-profile.jpg'}
                     alt="Profile"
                     className="profile-picture"
                 />

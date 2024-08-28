@@ -1,9 +1,10 @@
 from flask_restful import Resource, reqparse
-from flask import request, session, make_response
+from flask import request, session, make_response, send_from_directory
 from werkzeug.utils import secure_filename
 import os
+import time
 from server.models.user import User, db
-from server.config import bcrypt, UPLOAD_FOLDER
+from server.config import bcrypt
 from server.models.dj import Dj
 
 class Signup(Resource):
@@ -91,6 +92,13 @@ class Me(Resource):
         return make_response({"error": "No valid fields to update."}, 400)
 
 class ProfileImage(Resource):
+    UPLOAD_FOLDER = 'user-profiles'
+
+    def __init__(self):
+        # Ensure the upload directory exists
+        if not os.path.exists(self.UPLOAD_FOLDER):
+            os.makedirs(self.UPLOAD_FOLDER)
+
     def post(self):
         user_id = session.get('user_id')
         if not user_id:
@@ -110,18 +118,19 @@ class ProfileImage(Resource):
         if not self.allowed_file(file.filename):
             return make_response({"error": "Unsupported file type."}, 400)
 
-        # Save new profile image
-        filename = secure_filename(file.filename)
-        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        # Save new profile image in 'user-profiles' folder
+        timestamp = int(time.time())
+        filename = f"{user.username}_{timestamp}.jpg"
+        file_path = os.path.join(self.UPLOAD_FOLDER, filename)
         file.save(file_path)
 
         # Remove old profile image if exists
         if user.profile_image_url:
-            old_image_path = os.path.join(UPLOAD_FOLDER, user.profile_image_url)
+            old_image_path = os.path.join(self.UPLOAD_FOLDER, user.profile_image_url)
             if os.path.exists(old_image_path):
                 os.remove(old_image_path)
 
-        # Update user's profile image URL
+        # Update user's profile image URL in the database
         user.profile_image_url = filename
         db.session.commit()
 
@@ -130,8 +139,6 @@ class ProfileImage(Resource):
     def allowed_file(self, filename):
         ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
 
 
 class Users(Resource):

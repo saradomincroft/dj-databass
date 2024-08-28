@@ -10,7 +10,7 @@ api.add_resource(Signup, '/signup')
 api.add_resource(Login, '/login')
 api.add_resource(Logout, '/logout')
 api.add_resource(Me, '/me')
-api.add_resource(ProfileImage, '/me/upload')
+api.add_resource(ProfileImage, '/me/user-profiles')
 api.add_resource(Favourites, '/me/favourites')
 api.add_resource(Users, '/users', '/users/<int:user_id>')
 

@@ -21,13 +21,16 @@ export default function Favourites() {
     const fetchFavourites = useCallback(async () => {
         try {
             const response = await axios.get('/api/me/favourites');
-            setFavourites(response.data.favourites || []);
-            setFilteredFavourites(response.data.favourites || []);
+            const sortedFavourites = response.data.favourites || [];
+            sortedFavourites.sort((a, b) => a.name.localeCompare(b.name));
+            setFavourites(sortedFavourites);
+            setFilteredFavourites(sortedFavourites);
         } catch (error) {
             setError('Error fetching favourites');
             console.error('Error fetching favourites:', error);
         }
     }, []);
+    
 
     const fetchGenres = useCallback(async () => {
         try {
