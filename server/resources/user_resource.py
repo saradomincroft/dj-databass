@@ -193,7 +193,7 @@ class Favourites(Resource):
 
         user = User.query.get(user_id)
         if user:
-            favourites = [{'id': dj.id, 'name': dj.name} for dj in user.favourites]
+            favourites = [user.serialize_favourites(dj) for dj in user.favourites]
             return {'favourites': favourites}, 200
         return make_response({"error": "User not found"}, 404)
 

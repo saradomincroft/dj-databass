@@ -12,27 +12,25 @@
     max-width: 400px; /* Set max width */
 }
 
-/* Full width form control */
 .form-control {
-    width: 100%; /* Full width of its container */
+    width: 100%; 
 }
 
-/* Flex properties for input groups */
 .input-group {
-    width: 100%; /* Take full width of parent */
-    margin-bottom: 1rem; /* Space between input groups */
+    width: 100%; 
+    margin-bottom: 1rem; 
 }
 
-/* Form control inside input group */
+
 .input-group .form-control {
-    flex: 1; /* Allow form control to take available space */
-    margin-right: 0; /* Remove right margin */
+    flex: 1;
+    margin-right: 0;
 }
 
 /* Button inside input group */
 .input-group .btn {
-    flex-shrink: 0; /* Prevent shrinking */
-    margin-left: 0; /* Remove left margin */
+    flex-shrink: 0; 
+    margin-left: 0; 
 }
 
 /* Form messages */
@@ -55,12 +53,12 @@
 
 /* Style for disabled option */
 option:disabled {
-    color: #6c757d; /* Placeholder color */
+    color: #6c757d; 
 }
 
 /* Styling for genres and subgenres */
 .genres-container {
-    background-color: #f2f2f2; /* Light grey background */
+    background-color: #f2f2f2; 
     border-radius: 8px;
     padding: 10px;
     margin-bottom: 1rem;
@@ -68,13 +66,13 @@ option:disabled {
 }
 
 .genre-badge {
-    background-color: #007bff; /* Bootstrap primary color */
+    background-color: #007bff;
     color: white;
     margin-right: 0.5rem;
 }
 
 .subgenre-input-group {
-    background-color: #e9ecef; /* Slightly darker grey for subgenres */
+    background-color: #e9ecef; 
     border-radius: 5px;
     padding: 5px;
     margin-bottom: 0.5rem;

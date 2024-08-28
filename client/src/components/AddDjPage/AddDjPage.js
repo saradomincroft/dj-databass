@@ -203,7 +203,7 @@ export default function AddDjPage() {
 
                     {/* Genres */}
                     <Form.Group controlId="genres">
-                <Form.Label>Genres:</Form.Label>
+                <Form.Label>Genres <br/> (You must add at least 1 genre to submit DJ):</Form.Label>
                 <InputGroup className="mb-2">
                     <Form.Control
                         type="text"
@@ -223,6 +223,7 @@ export default function AddDjPage() {
                         </div>
                         {subgenres[genre] && subgenres[genre].map((subgenre, subIndex) => (
                             <div key={subIndex} className="subgenre-item">
+                                <Form.Label>Subgenres <br/> (You must add at least 1 subgenre of each genre to submit DJ):</Form.Label>
                                 <InputGroup className="mb-2">
                                     <Form.Control
                                         type="text"
@@ -277,6 +278,7 @@ export default function AddDjPage() {
 
                     {/* Submit */}
                     <Button type="submit" disabled={!isFormValid()} variant="primary">Add DJ</Button>
+                    <Button type="button" onClick={handleClearForm} variant="secondary" className="ml-2">Reset Form</Button>
                 </Form>
 
                 <div className="form-messages">

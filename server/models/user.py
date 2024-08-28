@@ -12,6 +12,7 @@ user_dj_favourites = Table(
     Column('dj_id', Integer, ForeignKey('djs.id'))
 )
 
+
 class User(db.Model, SerializerMixin):
     __tablename__ = "users"
 
@@ -49,6 +50,10 @@ class User(db.Model, SerializerMixin):
         return {
             'id': dj.id,
             'name': dj.name,
+            'produces': dj.produces,
+            'genres': [genre.title for genre in dj.genres],
+            'subgenres': {genre.title: [subgenre.subtitle for subgenre in dj.subgenres if subgenre.genre_id == genre.id] for genre in dj.genres},
+            'venues': [venue.venuename for venue in dj.venues]
         }
 
     def __repr__(self):

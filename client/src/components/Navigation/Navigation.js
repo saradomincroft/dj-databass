@@ -40,8 +40,8 @@ export default function Navigation() {
                     <Navbar.Collapse id='responsive-navbar-nav' className={`justify-content-center ${menuOpen ? 'show' : ''}`}>
                         <Nav className='align-items-center custom-nav'>
                             <Nav.Link as={NavLink} to='/' exact onClick={() => openTab('home', '/')}>Home</Nav.Link>
-                            <Nav.Link as={NavLink} to="/add-dj" onClick={() => openTab('add-dj', '/add-dj')}>Add DJ</Nav.Link>
-                            {/* <Nav.Link as={NavLink} to="/djs" onClick={() => openTab('djs', '/djs')}>DJs</Nav.Link> */}
+                            <Nav.Link as={NavLink} to="/add-dj" onClick={() => openTab('add-dj')}>Add DJ</Nav.Link>
+                            <Nav.Link as={NavLink} to="/favourites" onClick={() => openTab('favourites')}>Favourites</Nav.Link>
                             <Nav.Link as={NavLink} to="/me" className="nav-link" onClick={() => openTab('me', '/me')}>Account</Nav.Link>
                        </Nav>
                     </Navbar.Collapse>
@@ -52,8 +52,8 @@ export default function Navigation() {
                 <button className="closebtn" onClick={closeNav}>×</button>
                 <Nav className="flex-column align-items-center custom-nav">
                     <Nav.Link as={NavLink} to="/" exact className="nav-link" onClick={() => openTab('home', '/')}>Home</Nav.Link>
-                    <Nav.Link as={NavLink} to="/add-dj" className="nav-link" onClick={() => openTab('add-dj', '/add-dj')}>Add DJ</Nav.Link>
-                    {/* <Nav.Link as={NavLink} to="/djs" className="nav-link" onClick={() => openTab('djs', '/djs')}>DJs</Nav.Link> */}
+                    <Nav.Link as={NavLink} to="/add-dj" className="nav-link" onClick={() => openTab('add-dj')}>Add DJ</Nav.Link>
+                    <Nav.Link as={NavLink} to="/favourites" onClick={() => openTab('favourites')}>Favourites</Nav.Link>
                     <Nav.Link as={NavLink} to="/me" className="nav-link" onClick={() => openTab('me', '/me')}>Account</Nav.Link>
                 </Nav>
             </div>
