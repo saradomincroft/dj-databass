@@ -42,7 +42,7 @@ export default function ProfilePictureEditor({ user, fetchUserData }) {
             });
             console.log('Upload Response:', response.data);
             setSuccessMessage('Profile image uploaded successfully.');
-            await fetchUserData();
+            await fetchUserData(); // Ensure this is correctly updating user data
             setIsEditing(false);
         } catch (error) {
             const errorMessage = error.response?.data?.error || 'Failed to upload profile image.';
@@ -56,7 +56,7 @@ export default function ProfilePictureEditor({ user, fetchUserData }) {
             const response = await axios.delete('/api/me/delete-profile-image', { withCredentials: true });
             console.log('Delete Response:', response.data);
             setSuccessMessage('Profile image deleted successfully.');
-            await fetchUserData();
+            await fetchUserData(); // Ensure this is correctly updating user data
             setIsEditing(false);
         } catch (error) {
             const errorMessage = error.response?.data?.error || 'Failed to delete profile image.';
@@ -69,7 +69,7 @@ export default function ProfilePictureEditor({ user, fetchUserData }) {
         <div className="profile-picture-container">
             <div className="profile-picture-img">
                 <img
-                    src={user?.profileImageUrl ? `/me/user-profiles/${user.profileImageUrl}?t=${new Date().getTime()}` : '/img/default-profile.jpg'}
+                    src={user?.profile_image_url ? `/user-profiles/${user.profile_image_url}` : '/img/default-profile.jpg'}
                     alt="Profile"
                     className="profile-picture"
                 />

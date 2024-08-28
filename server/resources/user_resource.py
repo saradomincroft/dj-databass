@@ -92,7 +92,8 @@ class Me(Resource):
         return make_response({"error": "No valid fields to update."}, 400)
 
 class ProfileImage(Resource):
-    UPLOAD_FOLDER = 'user-profiles'
+    # Define the path to the public directory
+    UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), '..',  '..', 'client', 'public', 'user-profiles')
 
     def __init__(self):
         # Ensure the upload directory exists
@@ -118,7 +119,7 @@ class ProfileImage(Resource):
         if not self.allowed_file(file.filename):
             return make_response({"error": "Unsupported file type."}, 400)
 
-        # Save new profile image in 'user-profiles' folder
+        # Save new profile image in 'public/user-profiles' folder
         timestamp = int(time.time())
         filename = f"{user.username}_{timestamp}.jpg"
         file_path = os.path.join(self.UPLOAD_FOLDER, filename)
