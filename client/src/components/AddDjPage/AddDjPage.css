@@ -1,10 +1,5 @@
 /* src/components/AddDjPage/AddDjPage.css */
 
-/* Apply box-sizing border-box universally */
-* {
-    box-sizing: border-box;
-}
-
 /* Container for adding DJ */
 .add-dj-container {
     display: flex;
@@ -24,8 +19,7 @@
 
 /* Flex properties for input groups */
 .input-group {
-
-    width: 300px; /* Take full width of parent */
+    width: 100%; /* Take full width of parent */
     margin-bottom: 1rem; /* Space between input groups */
 }
 
@@ -64,4 +58,110 @@ option:disabled {
     color: #6c757d; /* Placeholder color */
 }
 
+/* Styling for genres and subgenres */
+.genres-container {
+    background-color: #f2f2f2; /* Light grey background */
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 1rem;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
 
+.genre-badge {
+    background-color: #007bff; /* Bootstrap primary color */
+    color: white;
+    margin-right: 0.5rem;
+}
+
+.subgenre-input-group {
+    background-color: #e9ecef; /* Slightly darker grey for subgenres */
+    border-radius: 5px;
+    padding: 5px;
+    margin-bottom: 0.5rem;
+}
+
+.subgenre-input-group .btn {
+    margin-left: 0.5rem;
+}
+
+.genre-info-text {
+    color: #6c757d; /* Grey text for instructions */
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.remove-btn {
+    background-color: #dc3545; /* Bootstrap danger color */
+    color: white;
+}
+
+.add-btn {
+    background-color: #6c757d; /* Bootstrap secondary color */
+    color: white;
+}
+
+.input-group .form-control {
+    border-radius: 5px 0 0 5px; /* Round corners for left side of input */
+}
+
+.input-group .btn {
+    border-radius: 0 5px 5px 0; /* Round corners for right side of button */
+}
+
+/* Hover effects */
+.btn:hover {
+    opacity: 0.9;
+}
+
+/* Styles for genre container */
+/* Container for each genre */
+.genre-container {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+}
+
+/* Header for each genre */
+.genre-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Title of genre */
+.genre-title {
+    font-weight: bold;
+}
+
+/* Add Subgenre button */
+.genre-container .btn-secondary {
+    margin-top: 10px;
+}
+
+/* List of subgenres */
+.subgenre-item {
+    margin-top: 10px;
+}
+
+/* Subgenre input styling */
+.subgenre-item .form-control {
+    border-radius: 4px;
+    padding: 8px;
+}
+
+/* Remove buttons */
+.genre-container .btn-danger {
+    margin-left: 10px;
+}
+
+/* Form control styling */
+.form-control {
+    border-radius: 4px;
+}

@@ -19,6 +19,7 @@ class User(db.Model, SerializerMixin):
     username = Column(String, nullable=False, unique=True)
     is_admin = Column(Boolean, default=False)
     _hashed_password = Column(String, nullable=False)
+    profile_image_url = Column(String)  
 
     # Many-to-many relationship with Dj
     favourites = relationship('Dj', secondary=user_dj_favourites, backref='users')
@@ -40,6 +41,7 @@ class User(db.Model, SerializerMixin):
             'id': self.id,
             'username': self.username,
             'is_admin': self.is_admin,
+            'profile_image_url': self.profile_image_url, 
             'favourites': [self.serialize_favourites(dj) for dj in self.favourites] if self.favourites else []
         }
     

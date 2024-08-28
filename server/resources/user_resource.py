@@ -6,7 +6,6 @@ from server.models.user import User, db
 from server.config import bcrypt, UPLOAD_FOLDER
 from server.models.dj import Dj
 
-
 class Signup(Resource):
     def post(self):
         session.pop('user_id', None) # Clear previous session data
@@ -21,7 +20,6 @@ class Signup(Resource):
             return make_response({"error": "User already exists"}, 400)
 
         new_user = User(username=data['username'], is_admin=data['is_admin'])
-
         new_user.hashed_password = data['password']
 
         db.session.add(new_user)
@@ -36,28 +34,17 @@ class Login(Resource):
         username = data.get('username')
         password = data.get('password')
 
-        print(f"Login attempt: username={username}, password={password}")
-
         user = User.query.filter_by(username=username).first()
-        if user:
-            print(f"User found: {user.username}, Hashed password: {user.hashed_password}")
-            if user.authenticate(password):
-                session['user_id'] = user.id
-                print(f"Login successful, user_id set to {user.id}")
-                return make_response({"user": user.to_dict()}, 200)
-            else:
-                print("Password mismatch")
-        else:
-            print("User not found")
+        if user and user.authenticate(password):
+            session['user_id'] = user.id
+            return make_response({"user": user.to_dict()}, 200)
 
         return make_response({"error": "Unauthorized"}, 403)
-
 
 class Logout(Resource):
     def delete(self):
         session.pop('user_id', None)
         return make_response({"message": "Logout successful"}, 200)
-
 
 class Me(Resource):
     def get(self):
@@ -78,43 +65,32 @@ class Me(Resource):
             return make_response({"error": "User not found"}, 404)
         
         data = request.get_json()
-
         old_password = data.get('oldPassword')
         new_password = data.get('newPassword')
         username = data.get('username')
 
-        # Handle password update
         if old_password and new_password:
             if not user.authenticate(old_password):
                 return make_response({"error": "Old password is incorrect."}, 401)
-            
-            # Update the password
             user.hashed_password = new_password
             db.session.commit()
             return make_response({"message": "Password updated successfully."}, 200)
         
-        # Handle username update
         if username:
             if not username.strip():
                 return make_response({"error": "Username cannot be blank."}, 400)
-            
             if username == user.username:
                 return make_response({"error": "New username is the same as the current username."}, 400)
-            
             existing_user = User.query.filter_by(username=username).first()
-            if existing_user:
-                # Check that the existing username does not belong to the current user
-                if existing_user.id != user_id:
-                    return make_response({"error": "Username already exists."}, 409)
-            
+            if existing_user and existing_user.id != user_id:
+                return make_response({"error": "Username already exists."}, 409)
             user.username = username
             db.session.commit()
             return make_response({"message": "Username updated successfully."}, 200)
 
         return make_response({"error": "No valid fields to update."}, 400)
 
-
-    
+class ProfileImage(Resource):
     def post(self):
         user_id = session.get('user_id')
         if not user_id:
@@ -124,51 +100,38 @@ class Me(Resource):
         if not user:
             return make_response({"error": "User not found"}, 404)
 
-        # Upload profile image
-        if 'profileImage' in request.files:
-            file = request.files['profileImage']
-            if file.filename == '':
-                return make_response({"error": "No selected file."}, 400)
+        if 'profileImage' not in request.files:
+            return make_response({"error": "No image provided."}, 400)
 
-            if file and self.allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                file_path = os.path.join(UPLOAD_FOLDER, filename)
-                file.save(file_path)
+        file = request.files['profileImage']
+        if file.filename == '':
+            return make_response({"error": "No selected file."}, 400)
 
-                # Update user's profile image URL
-                user.profile_image_url = file_path
-                db.session.commit()
+        if not self.allowed_file(file.filename):
+            return make_response({"error": "Unsupported file type."}, 400)
 
-                return make_response({"message": "Profile image uploaded successfully."}, 200)
+        # Save new profile image
+        filename = secure_filename(file.filename)
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        file.save(file_path)
 
-        return make_response({"error": "No image provided."}, 400)
-
-    def delete(self):
-        user_id = session.get('user_id')
-        if not user_id:
-            return make_response({"error": "Not signed in"}, 403)
-
-        user = User.query.get(user_id)
-        if not user:
-            return make_response({"error": "User not found"}, 404)
-
-        # Handle profile image deletion logic
+        # Remove old profile image if exists
         if user.profile_image_url:
-            try:
-                os.remove(user.profile_image_url)  # Remove the image file
-                user.profile_image_url = None  # Clear the profile image URL
-                db.session.commit()
+            old_image_path = os.path.join(UPLOAD_FOLDER, user.profile_image_url)
+            if os.path.exists(old_image_path):
+                os.remove(old_image_path)
 
-                return make_response({"message": "Profile image deleted successfully."}, 200)
-            except Exception as e:
-                return make_response({"error": f"Failed to delete profile image: {str(e)}"}, 500)
+        # Update user's profile image URL
+        user.profile_image_url = filename
+        db.session.commit()
 
-        return make_response({"error": "No profile image to delete."}, 400)
+        return make_response({"message": "Profile image uploaded successfully."}, 200)
 
-    @staticmethod
-    def allowed_file(filename):
-        allowed_extensions = {'png', 'jpg', 'jpeg', 'gif'}
-        return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
+    def allowed_file(self, filename):
+        ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+        return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
 
 
 class Users(Resource):
@@ -189,7 +152,6 @@ class Users(Resource):
                 return make_response(user.to_dict(), 200)
             return make_response({"error": "User not found"}, 404)
     
-    
     def delete(self, identifier):
         current_user_id = session.get('user_id')
         current_user = User.query.get(current_user_id)
@@ -199,7 +161,6 @@ class Users(Resource):
             user_to_delete = User.query.get(int(identifier))
         else:
             user_to_delete = User.query.filter_by(username=identifier).first()
-
 
         if not current_user:
             return make_response({'error': 'Current user not found'}, 404)
@@ -223,7 +184,6 @@ class Users(Resource):
             return make_response({'message': 'User deleted successfully'}, 200)
         
         return make_response({'error': 'You do not have admin access to delete other users'}, 403)
-    
 
 class Favourites(Resource):
     def get(self):
@@ -237,7 +197,6 @@ class Favourites(Resource):
             return {'favourites': favourites}, 200
         return make_response({"error": "User not found"}, 404)
 
-    
     def post(self):
         user_id = session.get('user_id')
         if not user_id:

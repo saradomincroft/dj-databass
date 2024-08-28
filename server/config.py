@@ -12,25 +12,24 @@ app = Flask(__name__)
 # Load configuration from environment variables or use defaults
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI', 'sqlite:///data.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'secret_key')
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your_default_secret_key_here')  # Replace with a more secure default
 
 # Initialize extensions
-db = SQLAlchemy(app) # Database integration
+db = SQLAlchemy(app)  # Database integration
 migrate = Migrate(app, db)
-api = Api(app) # Flask-RESTful
+api = Api(app)  # Flask-RESTful
 
 # Configure CORS to allow requests from the frontend
-# Cross-Origin Resource Sharing
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}}, supports_credentials=True)
-# supports_credentials=True - Allows cookies and other credentials sent with requests
 
 # Initialize Flask-Bcrypt for bcrypt hashing for passwords (security)
 bcrypt = Bcrypt(app)
 
+# File upload setup
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 UPLOAD_FOLDER = os.path.join(BASE_DIR, 'uploads')
-
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
+# Create upload folder if it doesn't exist
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)

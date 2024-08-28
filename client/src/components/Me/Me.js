@@ -7,7 +7,6 @@ export default function Me() {
     const [user, setUser] = useState(null);
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null);
-    // const [profileImage, setProfileImage] = useState(null);
     const [username, setUsername] = useState('');
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -43,38 +42,6 @@ export default function Me() {
         setNewPassword('');
         setConfirmNewPassword('');
     };
-
-
-    // const handleProfileImageChange = (e) => {
-    //     setProfileImage(e.target.files[0]);
-    // };
-
-    // const handleProfileImageUpload = async () => {
-    //     if (!profileImage) return;
-
-    //     const formData = new FormData();
-    //     formData.append('profileImage', profileImage);
-
-    //     try {
-    //         await axios.post('http://localhost:4000/api/me/upload', formData, { withCredentials: true });
-    //         setSuccessMessage('Profile image uploaded successfully.');
-    //         fetchUserData();
-    //     } catch (error) {
-    //         setError('Failed to upload profile image.');
-    //         console.error('Error uploading profile image:', error);
-    //     }
-    // };
-
-    // const handleProfileImageDelete = async () => {
-    //     try {
-    //         await axios.delete('http://localhost:4000/api/me/delete-profile-image', { withCredentials: true });
-    //         setSuccessMessage('Profile image deleted successfully.');
-    //         fetchUserData();
-    //     } catch (error) {
-    //         setError('Failed to delete profile image.');
-    //         console.error('Error deleting profile image:', error);
-    //     }
-    // };
 
     const handleUsernameUpdate = async () => {
         if (!username.trim()) {
@@ -165,8 +132,8 @@ export default function Me() {
             <h1>{user ? user.username : 'Loading...'}</h1>
 
             {/* Profile Picture Section */}
+            {/* Ensure ProfilePictureEditor correctly handles and displays profile image */}
             <ProfilePictureEditor user={user} fetchUserData={fetchUserData} />
-
 
             {/* Display Admin status (or blank for non-admins) */}
             <h2>{user?.is_admin ? 'Admin User' : ''}</h2>

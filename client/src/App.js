@@ -43,6 +43,7 @@ export default function App() {
         localStorage.removeItem('isAuthenticated');
         localStorage.removeItem('userData');
         setIsAuthenticated(false);
+        window.location.href = '/';
     };
 
     return (
