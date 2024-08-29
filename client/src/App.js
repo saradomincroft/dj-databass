@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import './App.css'
+import './App.css';
 import LandingPage from './components/LandingPage';
 import Navigation from './components/Navigation/Navigation';
 import Home from './components/Home/Home';
@@ -10,7 +10,6 @@ import AddDjPage from './components/AddDjPage/AddDjPage';
 import Djs from './components/Djs/Djs';
 import DjPage from './components/DjPage/DjPage';
 import Favourites from './components/Favourites/Favourites';
-
 
 function Layout({ children }) {
     const location = useLocation();
@@ -27,16 +26,24 @@ export default function App() {
 
     useEffect(() => {
         const authStatus = localStorage.getItem('isAuthenticated');
-        setIsAuthenticated(authStatus === 'true');
+        const userData = localStorage.getItem('userData');
+        
+        if (authStatus === 'true' && userData) {
+            setIsAuthenticated(true);
+        } else {
+            setIsAuthenticated(false);
+        }
     }, []);
 
     const handleLogin = () => {
         localStorage.setItem('isAuthenticated', 'true');
+        localStorage.setItem('userData', JSON.stringify({/* user data */}));
         setIsAuthenticated(true);
     };
 
     const handleSignup = () => {
         localStorage.setItem('isAuthenticated', 'true');
+        localStorage.setItem('userData', JSON.stringify({/* user data */}));
         setIsAuthenticated(true);
     };
 
@@ -44,7 +51,7 @@ export default function App() {
         localStorage.removeItem('isAuthenticated');
         localStorage.removeItem('userData');
         setIsAuthenticated(false);
-        window.location.href = '/';
+        window.location.href = '/';  // Consider using <Navigate /> instead for better SPA handling
     };
 
     return (

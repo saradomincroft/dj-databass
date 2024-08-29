@@ -6,6 +6,7 @@ djs_data = [
     {
         "name": "DJ Eat",
         "produces": True,
+        "city": "London",
         "genres": ["Dubstep", "House"],
         "subgenres": {
             "Dubstep": ["Brostep", "Post-Dubstep"],
@@ -16,6 +17,7 @@ djs_data = [
     {
         "name": "DJ Sleep",
         "produces": True,
+        "city": "London",
         "genres": ["Drum & Bass", "Techno"],
         "subgenres": {
             "Drum & Bass": ["Liquid", "Jump Up"],
@@ -26,6 +28,7 @@ djs_data = [
     {
         "name": "DJ Rave",
         "produces": False,
+        "city": "London",
         "genres": ["Trap", "Electro"],
         "subgenres": {
             "Trap": ["Classic Trap", "Future Trap"],
@@ -36,6 +39,7 @@ djs_data = [
     {
         "name": "DJ Repeat",
         "produces": True,
+        "city": "London",
         "genres": ["Progressive House", "Future Bass"],
         "subgenres": {
             "Progressive House": ["Melodic Progressive", "Big Room Progressive"],
@@ -46,6 +50,7 @@ djs_data = [
     {
         "name": "DJ Hombre",
         "produces": True,
+        "city": "London",        
         "genres": ["Tech House", "Bass House"],
         "subgenres": {
             "Tech House": ["Deep Tech House", "Groove Tech House"],
@@ -56,6 +61,7 @@ djs_data = [
     {
         "name": "DJ Frog",
         "produces": False,
+        "city": "London",
         "genres": ["Hardstyle", "Psytrance"],
         "subgenres": {
             "Hardstyle": ["Rawstyle", "Melodic Hardstyle"],
@@ -66,6 +72,7 @@ djs_data = [
     {
         "name": "DJ Ambient",
         "produces": True,
+        "city": "London",
         "genres": ["Ambient", "Chillout"],
         "subgenres": {
             "Ambient": ["Space Ambient", "Dark Ambient"],
@@ -76,6 +83,7 @@ djs_data = [
     {
         "name": "DJ Money",
         "produces": True,
+        "city": "London",
         "genres": ["Garage", "Grime"],
         "subgenres": {
             "Garage": ["UK Garage", "2-Step Garage"],
@@ -86,6 +94,7 @@ djs_data = [
     {
         "name": "DJ EZ",
         "produces": False,
+        "city": "London",
         "genres": ["House", "Jazz House"],
         "subgenres": {
             "House": ["Chicago House", "Acid House"],
@@ -96,6 +105,7 @@ djs_data = [
     {
         "name": "DJ Marshmello",
         "produces": True,
+        "city": "London",
         "genres": ["Industrial", "EDM"],
         "subgenres": {
             "Industrial": ["Power Noise", "Rhythmic Noise"],
@@ -155,7 +165,9 @@ with app.app_context():
             # Create DJ
             dj = Dj(
                 name=dj_data['name'],
-                produces=dj_data['produces']
+                produces=dj_data['produces'],
+                city=dj_data['city'],
+                dj_profile_picture=None
             )
             db.session.add(dj)
             db.session.flush()  # Flush to get the DJ ID
