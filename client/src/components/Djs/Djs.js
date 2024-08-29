@@ -160,7 +160,7 @@ export default function Djs() {
     const isFavourite = (dj) => favourites.some(fav => fav.id === dj.id);
 
     return (
-        <div id="Djs" className="tabcontent">
+        <div id="Djs">
             <div className="container-fluid">
                         <div className="scrollable-container">
                             <div className="filter-controls form-controls-container">
@@ -233,7 +233,7 @@ export default function Djs() {
                     </div>
 
                     <div className="dj-list">
-                        <h2>DJ List</h2>
+                        <h1 class="dj-list-title">All DJs</h1>
                         {error && <p className="text-danger">{error}</p>}
                         {filteredDjs.length === 0 ? (
                             <p>No DJs found</p>

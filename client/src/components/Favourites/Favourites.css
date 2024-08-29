@@ -18,17 +18,16 @@
 
 /* Favourites section */
 .favourites {
-    padding: 20px;
+    padding: 20px 30px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    height: 500px;
-    overflow-y: scroll;
-    display: flex;
-    flex-direction: column;
-    scrollbar-width: thin;
-    scrollbar-color: #444 #f1f1f1;
+    height: 800px;
+    max-width: 600px;
+    margin: 0 auto;
+    overflow: auto;
     background: rgba(255, 36, 0, 0.8);
     font-family: monospace;
     border-radius: 8px;
+    position: relative; 
 }
 
 /* List items within favourites */

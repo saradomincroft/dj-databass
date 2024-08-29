@@ -1,18 +1,96 @@
-/* src/components/Djs/Djs.css */
-
-.scrollable-container {
+/* Scrollable container for the DJ list */
+.dj-list {
+    padding: 20px 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    height: 800px;
+    max-width: 600px;
+    margin: 0 auto;
+    overflow: auto;
+    background: rgba(255, 36, 0, 0.8);
+    font-family: monospace;
     border-radius: 8px;
-    overflow: hidden;
-    background-color: #ffffff;
+    position: relative; 
 }
+
+
+.dj-list::-webkit-scrollbar {
+    width: 12px;
+}
+
+.dj-list::-webkit-scrollbar-track {
+    background: rgba(255, 36, 0, 0.8); 
+    border-radius: 8px;
+}
+
+.dj-list::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 8px; 
+}
+
+.dj-list::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+}
+
+/* List items within the DJ list */
+.dj-list .list-group-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(30, 30, 30);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    border-radius: 8px; 
+    margin-bottom: 6px; 
+}
+
+
+.dj-list .list-group-item:last-child {
+    margin-bottom: 0;
+}
+
+/* Links within list items */
+.dj-list .list-group-item a {
+    color: white;
+}
+
+/* Link hover effect */
+.dj-list .list-group-item a:hover {
+    text-decoration: underline;
+}
+
+/* Favourites icon */
+.favourite-icon {
+    font-size: 30px;
+    line-height: 1;
+    color: #ff5c5c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.heart-container {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+}
+
 
 .filter-controls {
     padding: 20px 30px;
     height: 400px;
+    max-width: 600px;
+    margin: 0 auto;
+    overflow: auto;
+    position: relative; 
     background-color: #f8f9fa;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+
 
 .filter-controls .form-control,
 .filter-controls .form-select {
@@ -26,57 +104,35 @@
     cursor: not-allowed;
 }
 
-
-.dj-list {
-    padding: 20px 30px; 
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
-    height: 800px; 
-    overflow-y: scroll; 
+.dj-list-title {
+    color: white;
 }
 
 
-.favourite-icon {
-    font-size: 30px;
-    line-height: 1;
-    color: #ff5c5c;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-
-.heart-container {
-    width: 50px;
-    height: 50px; 
-    display: flex;
-    align-items: center; 
-    justify-content: center;
-    margin-right: 10px;
-}
-
-
-.favourites .list-group-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-
-.filter-controls .form-control,
-.filter-controls .form-select {
-    width: 100%;
-    max-width: 100%; 
-}
-
-
-.list-group-item {
-    margin-bottom: 10px;
-}
-
-
-/* Responsive */
 @media (max-width: 767px) {
-    .col-md-4, .col-md-6, .col-md-8 {
-        width: 100%;
+    .dj-list {
+        font-size: 14px; 
+    }
+
+    .dj-list .list-group-item {
+        font-size: 0.9em; 
+    }
+
+    .filter-controls {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .dj-list {
+        font-size: 12px; 
+    }
+
+    .dj-list .list-group-item {
+        font-size: 0.8em; 
+    }
+
+    .filter-controls {
+        font-size: 12px;
     }
 }
