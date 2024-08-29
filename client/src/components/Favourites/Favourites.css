@@ -70,3 +70,23 @@
 .favourites::-webkit-scrollbar-thumb:hover {
     background-color: #555;
 }
+
+@media (max-width: 767px) {
+    .favourites {
+        font-size: 14px; 
+    }
+
+    .favourites .list-group-item {
+        font-size: 14px; 
+    }
+}
+
+@media (max-width: 480px) {
+    .favourites {
+        font-size: 12px; 
+    }
+
+    .favourites .list-group-item {
+        font-size: 12px;
+    }
+}

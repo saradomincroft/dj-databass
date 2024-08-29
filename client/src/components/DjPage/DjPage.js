@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import './DjPage.css';
 
 export default function DjPage() {
     const { dj_id } = useParams();
@@ -46,43 +47,43 @@ export default function DjPage() {
         navigate(`/dj/update/${dj_id}`);
     };
 
-    if (error) return <p>{error}</p>;
-    if (!dj) return <p>Loading...</p>;
+    if (error) return <p className="error-message">{error}</p>;
+    if (!dj) return <p className="loading-message">Loading...</p>;
 
     return (
         <div className="tabcontent">
-            <h1>{dj.name}</h1>
-            <p><strong>Produces:</strong> {dj.produces ? 'Yes' : 'No'}</p>
-            <p>
-                <strong>Genres and Subgenres:</strong> 
+        <div className="dj-page">
+            <h1 className="dj-name">{dj.name}</h1>
+            <p><strong>Music Producer:</strong> {dj.produces ? 'Yes' : 'No'}</p>
+                <h2>Genres and Subgenres</h2>
                 {dj.genres.length > 0 ? (
-                    <ul>
+                    <div className="genres">
                         {dj.genres.map((genre) => (
-                            <li key={genre}>
-                                {genre}
-                                <ul>
+                            <div key={genre} className="genre-section">
+                                <h3>{genre}</h3>
+                                <ul className="subgenres">
                                     {dj.subgenres[genre] ? (
                                         dj.subgenres[genre].map((subgenre, index) => (
                                             <li key={index}>{subgenre}</li>
                                         ))
-                                    ) : null}
+                                    ) : (
+                                        <li>No subgenres</li>
+                                    )}
                                 </ul>
-                            </li>
+                            </div>
                         ))}
-                    </ul>
+                    </div>
                 ) : 'N/A'}
-            </p>
             <p><strong>Venues:</strong> {dj.venues.length > 0 ? dj.venues.join(', ') : 'N/A'}</p>
             
             {/* Conditionally render Update and Delete buttons based on admin status */}
             {user && user.is_admin && (
-                <div>
-                    <button onClick={handleUpdate}>Update</button>
-                    <button onClick={handleDelete}>Delete</button>
+                <div className="admin-controls">
+                    <button className="btn btn-primary" onClick={handleUpdate}>Update</button>
+                    <button className="btn btn-danger" onClick={handleDelete}>Delete</button>
                 </div>
             )}
-            
-            <button onClick={() => navigate('/home')}>Home</button>
+        </div>
         </div>
     );
 }

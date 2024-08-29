@@ -1,7 +1,7 @@
 from server.config import db, bcrypt
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy import Column, String, Integer, Boolean, ForeignKey
+from sqlalchemy import Column, String, Integer, Boolean, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.associationproxy import association_proxy
 from .user import user_dj_favourites
@@ -15,8 +15,10 @@ class Dj(db.Model, SerializerMixin):
     id = Column(Integer(), primary_key=True)
     name = Column(String(), nullable=False)
     produces = Column(Boolean(), nullable=False)
+    dj_profile_picture = Column(String(), nullable=True)
+    city = Column(String(), nullable=False)
 
-    # users = relationship('User', secondary=user_dj_favourites, backref='favourites')
+    __table_args__ = (UniqueConstraint('name', 'city', name='unique_dj_per_city'),)
 
     dj_genres = relationship("DjGenre", back_populates="dj")
     genres = association_proxy("dj_genres", "genre", creator=lambda g: DjGenre(genre=g))
@@ -43,6 +45,8 @@ class Dj(db.Model, SerializerMixin):
             'id': self.id,
             'name': self.name,
             'produces': self.produces,
+            'dj_profile_picture': self.dj_profile_picture,
+            'city': self.city,
             'genres': list(genre_subgenre_mapping.keys()),  # List of genres
             'subgenres': genre_subgenre_mapping,  # Mapping of genres to their subgenres
             'venues': [venue.venuename for venue in self.venues]

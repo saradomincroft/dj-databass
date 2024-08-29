@@ -1,0 +1,61 @@
+.dj-page {
+    padding: 20px;
+    max-width: 600px; /* Set maximum width */
+    background-color: #d9534f; /* Reddish background color */
+    color: white; /* White text color */
+    border-radius: 8px; /* Border radius */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Box shadow */
+    margin: 0 auto; /* Center the container */
+    text-align: left; /* Left align text */
+}
+
+.dj-name {
+    font-size: 2em;
+    margin-bottom: 20px;
+    text-align: center; /* Center the DJ name */
+}
+
+.genres-container {
+    margin-top: 20px;
+}
+
+.genres {
+    padding-left: 0;
+    margin: 0; /* Remove margin */
+}
+
+.genre-section {
+    margin-bottom: 20px;
+}
+
+.genre-section h3 {
+    margin-bottom: 10px;
+    font-size: 1.5em;
+    text-align: left; /* Left align genre section title */
+}
+
+.subgenres {
+    list-style-type: none; /* Remove bullet points */
+    padding-left: 0;
+    margin: 0; /* Remove margin */
+}
+
+.subgenres li {
+    margin-bottom: 5px;
+}
+
+.admin-controls {
+    margin-top: 20px;
+}
+
+.error-message {
+    color: #f44336; /* Error color */
+}
+
+.loading-message {
+    color: #fff;
+}
+
+.btn {
+    margin-right: 10px;
+}

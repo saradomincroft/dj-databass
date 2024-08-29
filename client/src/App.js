@@ -8,7 +8,7 @@ import Signup from './components/Signup';
 import Me from './components/Me/Me';
 import AddDjPage from './components/AddDjPage/AddDjPage';
 import Djs from './components/Djs/Djs';
-import DjPage from './components/DjPage';
+import DjPage from './components/DjPage/DjPage';
 import Favourites from './components/Favourites/Favourites';
 
 
