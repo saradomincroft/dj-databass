@@ -31,7 +31,6 @@ export default function Favourites() {
         }
     }, []);
     
-
     const fetchGenres = useCallback(async () => {
         try {
             const response = await axios.get('/api/genres');
@@ -65,7 +64,6 @@ export default function Favourites() {
             console.error('Error fetching venues:', error);
         }
     }, []);
-
 
     // Filter function
     const filterFavourites = useCallback(() => {
@@ -153,85 +151,94 @@ export default function Favourites() {
 
     return (
         <div id="Djs" className="tabcontent">
+            <h2>Favourites</h2>
             <div className="container-fluid">
+                <div className="filter-controls form-controls-container">
+                    <input
+                        type="text"
+                        className="form-control mb-3"
+                        placeholder="Search DJs by name"
+                        value={search}
+                        onChange={handleSearch}
+                    />
+                    <select
+                        id="produces"
+                        className="form-select mb-3"
+                        value={selectedProduces}
+                        onChange={handleProduceChange}
+                    >
+                        <option value="">Select Produces Status</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                    <div className="mb-3">
+                        <select
+                            id="genre"
+                            className="form-select"
+                            value={selectedGenre}
+                            onChange={handleGenreChange}
+                        >
+                            <option value="">Select Genre</option>
+                            {genres.map(genre => (
+                                <option key={genre.id} value={genre.title}>
+                                    {genre.title}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="mb-3">
+                        <select
+                            id="subgenre"
+                            className="form-select"
+                            value={selectedSubgenre}
+                            onChange={handleSubgenreChange}
+                            disabled={!selectedGenre}
+                        >
+                            <option value="">Select Subgenre</option>
+                            {subgenres.map(subgenre => (
+                                <option key={subgenre.id} value={subgenre.subtitle}>
+                                    {subgenre.subtitle}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="mb-3">
+                        <select
+                            id="venue"
+                            className="form-select"
+                            value={selectedVenue}
+                            onChange={handleVenueChange}
+                        >
+                            <option value="">Select Venue</option>
+                            {venues.map(venue => (
+                                <option key={venue.id} value={venue.venuename}>
+                                    {venue.venuename}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <button className="btn btn-secondary" onClick={handleClear}>
+                        Clear Filters
+                    </button>
+                </div>
                 <div className="scrollable-container">
                     <div className="favourites">
-                        <h2>Favourites</h2>
-                        <div className="filter-controls form-controls-container">
-                            <input
-                                type="text"
-                                className="form-control mb-3"
-                                placeholder="Search DJs by name"
-                                value={search}
-                                onChange={handleSearch}
-                            />
-                            <select
-                                id="produces"
-                                className="form-select mb-3"
-                                value={selectedProduces}
-                                onChange={handleProduceChange}
-                            >
-                                <option value="">Select Produces Status</option>
-                                <option value="Yes">Yes</option>
-                                <option value="No">No</option>
-                            </select>
-                            <div className="mb-3">
-                                <select
-                                    id="genre"
-                                    className="form-select"
-                                    value={selectedGenre}
-                                    onChange={handleGenreChange}
-                                >
-                                    <option value="">Select Genre</option>
-                                    {genres.map(genre => (
-                                        <option key={genre.id} value={genre.title}>
-                                            {genre.title}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div className="mb-3">
-                                <select
-                                    id="subgenre"
-                                    className="form-select"
-                                    value={selectedSubgenre}
-                                    onChange={handleSubgenreChange}
-                                    disabled={!selectedGenre}
-                                >
-                                    <option value="">Select Subgenre</option>
-                                    {subgenres.map(subgenre => (
-                                        <option key={subgenre.id} value={subgenre.subtitle}>
-                                            {subgenre.subtitle}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div className="mb-3">
-                                <select
-                                    id="venue"
-                                    className="form-select"
-                                    value={selectedVenue}
-                                    onChange={handleVenueChange}
-                                >
-                                    <option value="">Select Venue</option>
-                                    {venues.map(venue => (
-                                        <option key={venue.id} value={venue.venuename}>
-                                            {venue.venuename}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                            <button className="btn btn-secondary" onClick={handleClear}>
-                                Clear Filters
-                            </button>
-                        </div>
+
+                        {error && <div className="alert alert-danger">{error}</div>}
                         {filteredFavourites.length === 0 ? (
                             <p>No favourites found</p>
                         ) : (
                             <ul className="list-group">
                                 {filteredFavourites.map(dj => (
                                     <li key={dj.id} className="list-group-item d-flex justify-content-between align-items-center">
-                                        <Link to={`/dj/${dj.id}`}>{dj.name}</Link>
+                                        <div>
+                                            <Link to={`/dj/${dj.id}`}>{dj.name}</Link>
+                                            {dj.genres && dj.genres.length > 0 && (
+                                                <span className="dj-genres">
+                                                    {' | ' + dj.genres.join(' | ')}
+                                                </span>
+                                            )}
+                                        </div>
                                         <button
                                             className="btn heart-container"
                                             onClick={() => handleToggleFavourite(dj)}

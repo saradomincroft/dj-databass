@@ -1,19 +1,61 @@
-.favourites {
-    padding: 20px 30px;
+/* Container for filter controls */
+.filter-controls {
+    padding: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    height: 800px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+}
+
+/* Make the cursor a pointer for all elements inside filter-controls except the search input */
+.filter-controls *:not(input[type="text"]) {
+    cursor: pointer;
+}
+
+/* Make the cursor text (default) for the search input */
+.filter-controls input[type="text"] {
+    cursor: text;
+}
+
+/* Favourites section */
+.favourites {
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    height: 500px;
     overflow-y: scroll;
     display: flex;
     flex-direction: column;
     scrollbar-width: thin;
-    scrollbar-color: #888 #f1f1f1; 
+    scrollbar-color: #444 #f1f1f1;
+    background: rgba(255, 36, 0, 0.8);
+    font-family: monospace;
+    border-radius: 8px;
 }
 
-
+/* List items within favourites */
 .favourites .list-group-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background: rgba(30, 30, 30);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    border-radius: 8px; 
+    margin-bottom: 6px; 
+}
+
+/* Remove the margin on the last item */
+.favourites .list-group-item:last-child {
+    margin-bottom: 0;
+}
+
+/* Links within list items */
+.favourites .list-group-item a {
+    color: white;
+}
+
+/* Link hover effect */
+.favourites .list-group-item a:hover {
+    text-decoration: underline;
 }
 
 /* Webkit browsers (Chrome, Safari) */
