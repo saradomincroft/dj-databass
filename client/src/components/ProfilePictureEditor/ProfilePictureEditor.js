@@ -5,6 +5,7 @@ import './ProfilePictureEditor.css';
 export default function ProfilePictureEditor({ user, fetchUserData }) {
     const [isEditing, setIsEditing] = useState(false);
     const [profileImage, setProfileImage] = useState(null);
+    const [previewImage, setPreviewImage] = useState(null);
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null);
 
@@ -19,8 +20,15 @@ export default function ProfilePictureEditor({ user, fetchUserData }) {
     }, [error, successMessage]);
 
     const handleProfileImageChange = (e) => {
-        setProfileImage(e.target.files[0]);
-        console.log('Selected File:', e.target.files[0]);
+        const file = e.target.files[0];
+        if (file) {
+            setProfileImage(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreviewImage(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
     const handleProfileImageUpload = async () => {
@@ -42,8 +50,9 @@ export default function ProfilePictureEditor({ user, fetchUserData }) {
             });
             console.log('Upload Response:', response.data);
             setSuccessMessage('Profile image uploaded successfully.');
-            await fetchUserData(); // Ensure this is correctly updating user data
+            await fetchUserData(); 
             setIsEditing(false);
+            setPreviewImage(null);
         } catch (error) {
             const errorMessage = error.response?.data?.error || 'Failed to upload profile image.';
             setError(errorMessage);
@@ -64,7 +73,6 @@ export default function ProfilePictureEditor({ user, fetchUserData }) {
             console.error('Error deleting profile image:', error);
         }
     };
-    
 
     return (
         <div className="profile-picture-container">
@@ -83,7 +91,7 @@ export default function ProfilePictureEditor({ user, fetchUserData }) {
                 <div className="edit-popup">
                     <button className="close-button" onClick={() => setIsEditing(false)}>×</button>
                     <img
-                        src={user?.profile_image_url ? `/user-profiles/${user.profile_image_url}` : '/img/default-profile.jpg'}
+                        src={previewImage || (user?.profile_image_url ? `/user-profiles/${user.profile_image_url}` : '/img/default-profile.jpg')}
                         alt="Profile Preview"
                         className="profile-picture"
                         style={{ width: '150px', height: '150px', borderRadius: '50%' }}
