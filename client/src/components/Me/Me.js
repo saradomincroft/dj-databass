@@ -131,8 +131,6 @@ export default function Me() {
         <div id="Me" className="tabcontent">
             <h1>{user ? user.username : 'Loading...'}</h1>
 
-            {/* Profile Picture Section */}
-            {/* Ensure ProfilePictureEditor correctly handles and displays profile image */}
             <ProfilePictureEditor user={user} fetchUserData={fetchUserData} />
 
             {/* Display Admin status (or blank for non-admins) */}

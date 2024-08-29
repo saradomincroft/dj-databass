@@ -29,8 +29,8 @@ export default function Home({ onLogout }) {
             <div className="header">
                 <div className="profile-picture-section">
                     <img
-                        src={user.profileImageUrl || '/img/default-profile.jpg'}
-                        alt="Profile"
+                    src={user?.profile_image_url ? `/user-profiles/${user.profile_image_url}` : '/img/default-profile.jpg'}
+                    alt="Profile"
                         className="profile-picture"
                     />
                     <h1 className="white">Welcome, {user.username}</h1>

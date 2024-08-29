@@ -56,7 +56,7 @@ export default function ProfilePictureEditor({ user, fetchUserData }) {
             const response = await axios.delete('/api/me/delete-profile-image', { withCredentials: true });
             console.log('Delete Response:', response.data);
             setSuccessMessage('Profile image deleted successfully.');
-            await fetchUserData(); // Ensure this is correctly updating user data
+            await fetchUserData();
             setIsEditing(false);
         } catch (error) {
             const errorMessage = error.response?.data?.error || 'Failed to delete profile image.';
@@ -64,6 +64,7 @@ export default function ProfilePictureEditor({ user, fetchUserData }) {
             console.error('Error deleting profile image:', error);
         }
     };
+    
 
     return (
         <div className="profile-picture-container">
@@ -82,7 +83,7 @@ export default function ProfilePictureEditor({ user, fetchUserData }) {
                 <div className="edit-popup">
                     <button className="close-button" onClick={() => setIsEditing(false)}>×</button>
                     <img
-                        src={profileImage ? URL.createObjectURL(profileImage) : '/img/default-profile.jpg'}
+                        src={user?.profile_image_url ? `/user-profiles/${user.profile_image_url}` : '/img/default-profile.jpg'}
                         alt="Profile Preview"
                         className="profile-picture"
                         style={{ width: '150px', height: '150px', borderRadius: '50%' }}

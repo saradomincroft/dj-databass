@@ -136,10 +136,36 @@ class ProfileImage(Resource):
         db.session.commit()
 
         return make_response({"message": "Profile image uploaded successfully."}, 200)
+    
 
     def allowed_file(self, filename):
         ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    
+class DeleteProfileImage(Resource):
+    def delete(self):
+        user_id = session.get('user_id')
+        if not user_id:
+            return make_response({"error": "Not signed in"}, 403)
+
+        user = User.query.get(user_id)
+        if not user:
+            return make_response({"error": "User not found"}, 404)
+
+        if not user.profile_image_url:
+            return make_response({"error": "No profile image to delete."}, 400)
+
+        # Remove old profile image if exists
+        old_image_path = os.path.join(ProfileImage.UPLOAD_FOLDER, user.profile_image_url)
+        if os.path.exists(old_image_path):
+            os.remove(old_image_path)
+
+        # Update user's profile image URL in the database
+        user.profile_image_url = None
+        db.session.commit()
+
+        return make_response({"message": "Profile image deleted successfully."}, 200)
+
 
 
 class Users(Resource):
