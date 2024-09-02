@@ -1,6 +1,5 @@
 from flask_restful import Resource, reqparse
-from flask import request, session, make_response, send_from_directory
-from werkzeug.utils import secure_filename
+from flask import request, session, make_response
 import os
 import time
 from server.models.user import User, db
@@ -49,47 +48,72 @@ class Logout(Resource):
 
 class Me(Resource):
     def get(self):
-        user_id = session.get('user_id')
-        if user_id:
-            user = User.query.get(user_id)
-            if user:
-                return make_response(user.to_dict(), 200)
-        return make_response({"error": "Not signed in"}, 403)
-    
-    def patch(self):
+        # Check if user_id is in the session
         user_id = session.get('user_id')
         if not user_id:
-            return make_response({"error": "Not signed in"}, 403)
-        
+            return make_response({"error": "Session expired. Please log in again."}, 403)
+
+        # Fetch the user from the database
         user = User.query.get(user_id)
         if not user:
+            # Clear the session if the user is not found
+            session.pop('user_id', None)
             return make_response({"error": "User not found"}, 404)
-        
+
+        # Return the user's data
+        return make_response(user.to_dict(), 200)
+
+    def patch(self):
+        # Check if user_id is in the session
+        user_id = session.get('user_id')
+        if not user_id:
+            return make_response({"error": "Session expired. Please log in again."}, 403)
+
+        # Fetch the user from the database
+        user = User.query.get(user_id)
+        if not user:
+            # Clear the session if the user is not found
+            session.pop('user_id', None)
+            return make_response({"error": "User not found"}, 404)
+
         data = request.get_json()
+
+        # Update password if both old and new passwords are provided
         old_password = data.get('oldPassword')
         new_password = data.get('newPassword')
-        username = data.get('username')
-
         if old_password and new_password:
             if not user.authenticate(old_password):
                 return make_response({"error": "Old password is incorrect."}, 401)
+
+            # Update password
             user.hashed_password = new_password
             db.session.commit()
             return make_response({"message": "Password updated successfully."}, 200)
-        
+
+        # Update username if provided
+        username = data.get('username')
         if username:
-            if not username.strip():
+            username = username.strip()
+            if not username:
                 return make_response({"error": "Username cannot be blank."}, 400)
+
             if username == user.username:
                 return make_response({"error": "New username is the same as the current username."}, 400)
+
+            # Check if the username already exists for another user
             existing_user = User.query.filter_by(username=username).first()
             if existing_user and existing_user.id != user_id:
                 return make_response({"error": "Username already exists."}, 409)
+
+            # Update username
             user.username = username
             db.session.commit()
             return make_response({"message": "Username updated successfully."}, 200)
 
+        # No valid fields to update
         return make_response({"error": "No valid fields to update."}, 400)
+
+
 
 class ProfileImage(Resource):
     # Define the path to the public directory

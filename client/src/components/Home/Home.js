@@ -10,7 +10,7 @@ export default function Home({ onLogout }) {
         // Fetch user data
         const fetchUser = async () => {
             try {
-                const response = await axios.get('/api/me', { withCredentials: true }); // Adjust the endpoint as needed
+                const response = await axios.get('/api/me', { withCredentials: true }); 
                 setUser(response.data);
             } catch (error) {
                 console.error('Error fetching user:', error);

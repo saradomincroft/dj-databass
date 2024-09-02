@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import DjProfilePictureEditor from '../DjProfilePictureEditor/DjProfilePictureEditor';
 import './DjPage.css';
 
 export default function DjPage() {
@@ -10,24 +11,25 @@ export default function DjPage() {
     const [error, setError] = useState(null);
     const [user, setUser] = useState(null);
 
+    // Function to fetch DJ data
+    const fetchData = async () => {
+        try {
+            // Fetch DJ details
+            const djResponse = await axios.get(`/api/dj/${dj_id}`);
+            setDj(djResponse.data);
+
+            // Fetch user details to check admin status
+            const userResponse = await axios.get('/api/me', { withCredentials: true });
+            setUser(userResponse.data);
+
+            setError(null);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            setError('Error fetching data. Please check the console for more details.');
+        }
+    };
+
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                // Fetch DJ details
-                const djResponse = await axios.get(`/api/dj/${dj_id}`);
-                setDj(djResponse.data);
-
-                // Fetch user details to check admin status
-                const userResponse = await axios.get('/api/me', { withCredentials: true });
-                setUser(userResponse.data);
-
-                setError(null);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                setError('Error fetching data. Please check the console for more details.');
-            }
-        };
-
         fetchData();
     }, [dj_id]);
 
@@ -52,9 +54,14 @@ export default function DjPage() {
 
     return (
         <div className="tabcontent">
-        <div className="dj-page">
-            <h1 className="dj-name">{dj.name}</h1>
-            <p><strong>Music Producer:</strong> {dj.produces ? 'Yes' : 'No'}</p>
+            <div className="dj-page">
+                <div className="dj-header">
+                    <h1 className="dj-name">{dj.name}</h1>
+
+                    <DjProfilePictureEditor dj={dj} fetchDjData={fetchData} />
+                </div>
+                <p><strong>City:</strong> {dj.city || 'N/A'}</p>
+                <p><strong>Music Producer:</strong> {dj.produces ? 'Yes' : 'No'}</p>
                 <h2>Genres and Subgenres</h2>
                 {dj.genres.length > 0 ? (
                     <div className="genres">
@@ -74,16 +81,16 @@ export default function DjPage() {
                         ))}
                     </div>
                 ) : 'N/A'}
-            <p><strong>Venues:</strong> {dj.venues.length > 0 ? dj.venues.join(', ') : 'N/A'}</p>
-            
-            {/* Conditionally render Update and Delete buttons based on admin status */}
-            {user && user.is_admin && (
-                <div className="admin-controls">
-                    <button className="btn btn-primary" onClick={handleUpdate}>Update</button>
-                    <button className="btn btn-danger" onClick={handleDelete}>Delete</button>
-                </div>
-            )}
-        </div>
+                <p><strong>Venues:</strong> {dj.venues.length > 0 ? dj.venues.join(', ') : 'N/A'}</p>
+                
+                {/* Conditionally render Update and Delete buttons based on admin status */}
+                {user && user.is_admin && (
+                    <div className="admin-controls">
+                        <button className="btn btn-primary" onClick={handleUpdate}>Update</button>
+                        <button className="btn btn-danger" onClick={handleDelete}>Delete</button>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

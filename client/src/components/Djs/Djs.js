@@ -233,7 +233,7 @@ export default function Djs() {
                     </div>
 
                     <div className="dj-list">
-                        <h1 class="dj-list-title">All DJs</h1>
+                        <h1 className="dj-list-title">All DJs</h1>
                         {error && <p className="text-danger">{error}</p>}
                         {filteredDjs.length === 0 ? (
                             <p>No DJs found</p>

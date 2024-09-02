@@ -13,6 +13,10 @@ register_routes(app)
 def serve_profile_image(filename):
     return send_from_directory('public/user-profiles', filename)
 
+@app.route('/dj-profiles/<filename>')
+def serve_dj_profile_image(filename):
+    return send_from_directory('public/dj-profiles', filename)
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=4000)

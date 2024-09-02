@@ -37,13 +37,11 @@ export default function App() {
 
     const handleLogin = () => {
         localStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('userData', JSON.stringify({/* user data */}));
         setIsAuthenticated(true);
     };
 
     const handleSignup = () => {
         localStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('userData', JSON.stringify({/* user data */}));
         setIsAuthenticated(true);
     };
 
@@ -51,7 +49,7 @@ export default function App() {
         localStorage.removeItem('isAuthenticated');
         localStorage.removeItem('userData');
         setIsAuthenticated(false);
-        window.location.href = '/';  // Consider using <Navigate /> instead for better SPA handling
+        window.location.href = '/'; 
     };
 
     return (

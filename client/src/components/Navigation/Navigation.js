@@ -1,18 +1,18 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import {Navbar, Nav, Container } from 'react-bootstrap'
+import { Navbar, Nav, Container } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './Navigation.css'
+import './Navigation.css';
 
 export default function Navigation() {
     const [menuOpen, setMenuOpen] = useState(false);
-    const [activeTab, setActiveTab] = useState(sessionStorage.getItem('activeTab') || 'home' );
+    const [activeTab, setActiveTab] = useState(sessionStorage.getItem('activeTab') || 'home');
     const [burgerVisible, setBurgerVisible] = useState(true);
     const navigate = useNavigate();
 
-    useEffect( () => {
+    useEffect(() => {
         sessionStorage.setItem('activeTab', activeTab);
-    }, [activeTab])
+    }, [activeTab]);
 
     const openNav = () => {
         document.getElementById('mySidebar').style.width = '100%';
@@ -34,16 +34,16 @@ export default function Navigation() {
     };
 
     return (
-        <div className={`overlay-menu ${menuOpen ? 'open' : '' }`}>
+        <div className={`overlay-menu ${menuOpen ? 'open' : ''}`}>
             <Navbar expand='lg' className='custom-navbar'>
                 <Container>
                     <Navbar.Collapse id='responsive-navbar-nav' className={`justify-content-center ${menuOpen ? 'show' : ''}`}>
                         <Nav className='align-items-center custom-nav'>
-                            <Nav.Link as={NavLink} to='/' exact onClick={() => openTab('home', '/')}>Home</Nav.Link>
+                            <Nav.Link as={NavLink} to='/' onClick={() => openTab('home', '/')}>Home</Nav.Link>
                             <Nav.Link as={NavLink} to="/add-dj" onClick={() => openTab('add-dj')}>Add DJ</Nav.Link>
                             <Nav.Link as={NavLink} to="/favourites" onClick={() => openTab('favourites')}>Favourites</Nav.Link>
                             <Nav.Link as={NavLink} to="/me" className="nav-link" onClick={() => openTab('me', '/me')}>Account</Nav.Link>
-                       </Nav>
+                        </Nav>
                     </Navbar.Collapse>
                 </Container>
             </Navbar>
@@ -51,13 +51,12 @@ export default function Navigation() {
             <div id="mySidebar" className="sidebar">
                 <button className="closebtn" onClick={closeNav}>×</button>
                 <Nav className="flex-column align-items-center custom-nav">
-                    <Nav.Link as={NavLink} to="/" exact className="nav-link" onClick={() => openTab('home', '/')}>Home</Nav.Link>
+                    <Nav.Link as={NavLink} to="/" className="nav-link" onClick={() => openTab('home', '/')}>Home</Nav.Link>
                     <Nav.Link as={NavLink} to="/add-dj" className="nav-link" onClick={() => openTab('add-dj')}>Add DJ</Nav.Link>
                     <Nav.Link as={NavLink} to="/favourites" onClick={() => openTab('favourites')}>Favourites</Nav.Link>
                     <Nav.Link as={NavLink} to="/me" className="nav-link" onClick={() => openTab('me', '/me')}>Account</Nav.Link>
                 </Nav>
             </div>
         </div>
-  
     );
-};
+}

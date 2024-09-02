@@ -25,6 +25,7 @@ body {
   color: #FF2400;
   font-family: monospace;
   padding-top: 80px;
+  padding-bottom: 80px;
   background-image: url('/public/img/bg.jpg');
 }
 
