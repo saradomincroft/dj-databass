@@ -9,6 +9,7 @@ import Me from './components/Me/Me';
 import AddDjPage from './components/AddDjPage/AddDjPage';
 import Djs from './components/Djs/Djs';
 import DjPage from './components/DjPage/DjPage';
+import UpdateDj from './components/UpdateDj/UpdateDj';
 import Favourites from './components/Favourites/Favourites';
 
 function Layout({ children }) {
@@ -81,6 +82,11 @@ export default function App() {
                             path="/dj/:dj_id"
                             element={isAuthenticated ? <DjPage /> : <Navigate to="/" />}
                         />
+                        <Route
+                            path="/dj/update/:dj_id"
+                            element={isAuthenticated ? <UpdateDj /> : <Navigate to="/" />}
+                        />
+
                         <Route
                             path="/me"
                             element={isAuthenticated ? <Me /> : <Navigate to="/" />}

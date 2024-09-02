@@ -21,14 +21,12 @@ export default function AddDjPage() {
     const [submitSuccess, setSubmitSuccess] = useState([]);
     const [suggestions, setSuggestions] = useState([]);
 
-    // Fetch DJs for suggestions
     useEffect(() => {
         axios.get('/api/djs')
             .then(response => setSuggestions(response.data))
             .catch(err => console.error('Failed to fetch DJs', err));
     }, []);
 
-    // Check DJ name existence on name change
     useEffect(() => {
         const checkDjExistence = () => {
             const checkCaseDjName = name.trim().toLowerCase();
@@ -51,7 +49,6 @@ export default function AddDjPage() {
         }
     }, [name, suggestions]);
 
-    // Clear message after submit
     useEffect(() => {
         if (submitError || submitSuccess) {
             const timer = setTimeout(() => {
@@ -65,7 +62,6 @@ export default function AddDjPage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // Clear previous messages
         setSubmitError('');
         setSubmitSuccess('');
     
@@ -76,7 +72,7 @@ export default function AddDjPage() {
                 genres,
                 subgenres,
                 venues,
-                city,  // Include city in the submission
+                city, 
             });
             setSubmitSuccess(`${name} added successfully!`);
             handleClearForm();
@@ -153,7 +149,7 @@ export default function AddDjPage() {
         setSubgenreInputs({});
         setVenueInput('');
         setVenues([]);
-        setCity(''); // Clear city input
+        setCity(''); 
         setError('');
         setSuccess('');
     };
@@ -163,9 +159,9 @@ export default function AddDjPage() {
                produces !== '' &&
                genres.length > 0 &&
                venues.length > 0 &&
-               city.trim() !== '' && // Check city input
+               city.trim() !== '' &&
                success === 'Available' &&
-               genres.every(genre => subgenres[genre] && subgenres[genre].length > 0); // Ensure each genre has at least one subgenre
+               genres.every(genre => subgenres[genre] && subgenres[genre].length > 0);
     };
 
     return (
@@ -180,6 +176,8 @@ export default function AddDjPage() {
                         <InputGroup>
                             <Form.Control
                                 type="text"
+                                id="name"
+                                name="name"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                                 required
@@ -199,6 +197,8 @@ export default function AddDjPage() {
                         <Form.Label>City:</Form.Label>
                         <Form.Control
                             type="text"
+                            id="city"
+                            name="city"
                             value={city}
                             onChange={(e) => setCity(e.target.value)}
                             required
@@ -210,6 +210,8 @@ export default function AddDjPage() {
                         <Form.Label>Music Production Status:</Form.Label>
                         <Form.Control
                             as="select"
+                            id="produces"
+                            name="produces"
                             value={produces}
                             onChange={(e) => setProduces(e.target.value)}
                             required
@@ -226,6 +228,8 @@ export default function AddDjPage() {
                         <InputGroup className="mb-2">
                             <Form.Control
                                 type="text"
+                                id="genreInput"
+                                name="genreInput"
                                 value={genreInput}
                                 onChange={(e) => setGenreInput(e.target.value)}
                                 placeholder="Enter genre"
@@ -242,20 +246,17 @@ export default function AddDjPage() {
                                 </div>
                                 <div className="subgenre-section">
                                     {subgenres[genre]?.map((subgenre, subIndex) => (
-                                        <div key={subIndex} className="subgenre-item">
-                                            {/* <Form.Label>Subgenres <br/> (You must add at least 1 subgenre of each genre to submit DJ):</Form.Label> */}
-                                            <InputGroup className="mb-2">
-                                                <Form.Control
-                                                    type="text"
-                                                    value={subgenre}
-                                                    onChange={(e) => handleSubgenreInputChange(genre, subIndex, e.target.value)}
-                                                    placeholder="Enter subgenre"
-                                                    readOnly
-                                                />
-                                                <Button variant="danger" size="sm" onClick={() => handleSubgenreRemove(genre, subIndex)}>
+                                        <div key={subIndex} className="subgenre-badge">
+                                            <Badge bg="secondary">
+                                                {subgenre}
+                                                <Button
+                                                    variant="link"
+                                                    onClick={() => handleSubgenreRemove(genre, subIndex)}
+                                                    className="remove-subgenre"
+                                                >
                                                     <FaTimes />
                                                 </Button>
-                                            </InputGroup>
+                                            </Badge>
                                         </div>
                                     ))}
                                     <InputGroup className="mb-2">
@@ -263,7 +264,7 @@ export default function AddDjPage() {
                                             type="text"
                                             value={subgenreInputs[genre] || ''}
                                             onChange={(e) => handleSubgenreInputChange(e, genre)}
-                                            placeholder="Add subgenre"
+                                            placeholder="Enter subgenre"
                                         />
                                         <Button variant="secondary" onClick={() => handleAddSubgenre(genre)}>Add Subgenre</Button>
                                     </InputGroup>
@@ -274,10 +275,12 @@ export default function AddDjPage() {
 
                     {/* Venues */}
                     <Form.Group controlId="venues">
-                        <Form.Label>Venues (Add at least 1 venue):</Form.Label>
+                        <Form.Label>Venues <br /> You must add at least 1 venue to submit DJ</Form.Label>
                         <InputGroup className="mb-2">
                             <Form.Control
                                 type="text"
+                                id="venueInput"
+                                name="venueInput"
                                 value={venueInput}
                                 onChange={(e) => setVenueInput(e.target.value)}
                                 placeholder="Enter venue"
@@ -285,23 +288,44 @@ export default function AddDjPage() {
                             <Button variant="secondary" onClick={handleAddVenue}>Add Venue</Button>
                         </InputGroup>
                         {venues.map((venue, index) => (
-                            <Badge key={index} pill variant="secondary" className="me-2">
-                                {venue}
-                                <FaTimes className="ms-2" onClick={() => handleVenueRemove(venue)} />
-                            </Badge>
+                            <div key={index} className="venue-badge">
+                                <Badge bg="secondary">
+                                    {venue}
+                                    <Button
+                                        variant="link"
+                                        onClick={() => handleVenueRemove(venue)}
+                                        className="remove-venue"
+                                    >
+                                        <FaTimes />
+                                    </Button>
+                                </Badge>
+                            </div>
                         ))}
                     </Form.Group>
 
-                    <Button
-                        variant="primary"
-                        type="submit"
-                        disabled={!isFormValid()}
-                    >
-                        Add DJ
-                    </Button>
+                    {/* Submit Button */}
+                    <div className="form-buttons">
+                        <Button
+                            variant="primary"
+                            type="submit"
+                            disabled={!isFormValid()}
+                        >
+                            Submit
+                        </Button>
+                        <Button
+                            variant="secondary"
+                            type="button"
+                            onClick={handleClearForm}
+                            className="clear-form-button"
+                        >
+                            Clear Form
+                        </Button>
+                    </div>
+
+                    {/* Form Feedback */}
+                    {submitError && <div className="text-danger">{submitError}</div>}
+                    {submitSuccess && <div className="text-success">{submitSuccess}</div>}
                 </Form>
-                {submitSuccess && <div className="text-success">{submitSuccess}</div>}
-                {submitError && <div className="text-error">{submitError}</div>}
             </Container>
         </div>
     );

@@ -37,7 +37,7 @@ export default function DjPage() {
         if (window.confirm('Are you sure you want to delete this DJ?')) {
             try {
                 await axios.delete(`/api/dj/${dj_id}`, { withCredentials: true });
-                navigate('/djs');
+                navigate('/home');
             } catch (error) {
                 console.error('Error deleting DJ:', error);
                 setError('Error deleting DJ. Please check the console for more details.');
