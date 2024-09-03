@@ -160,26 +160,30 @@ export default function UpdateDj() {
 
                 <Form onSubmit={handleUpdate}>
                     <Form.Group controlId="name">
-                        <Form.Label>Name</Form.Label>
-                        <Form.Control
-                            type="text"
-                            name="name"
-                            value={djData.name}
-                            onChange={handleInputChange}
-                            placeholder="Enter DJ name"
-                            required
-                        />
+                        <Form.Label className="form-label">Name</Form.Label>
+                        <InputGroup>
+                            <Form.Control
+                                type="text"
+                                name="name"
+                                value={djData.name}
+                                onChange={handleInputChange}
+                                placeholder="Enter DJ name"
+                                required
+                            />
+                        </InputGroup>
                     </Form.Group>
 
                     <Form.Group controlId="city" className="mt-3">
-                        <Form.Label>City</Form.Label>
-                        <Form.Control
-                            type="text"
-                            name="city"
-                            value={djData.city}
-                            onChange={handleInputChange}
-                            placeholder="Enter DJ city"
-                        />
+                        <Form.Label className="form-label">City</Form.Label>
+                        <InputGroup>
+                            <Form.Control
+                                type="text"
+                                name="city"
+                                value={djData.city}
+                                onChange={handleInputChange}
+                                placeholder="Enter DJ city"
+                            />
+                        </InputGroup>
                     </Form.Group>
 
                     <Form.Group controlId="produces" className="mt-3">
@@ -193,6 +197,7 @@ export default function UpdateDj() {
                     </Form.Group>
 
                     <Form.Group controlId="genre" className="mt-3">
+                        <Form.Label className="form-label">Genres</Form.Label>
                         <InputGroup>
                             <Form.Control
                                 type="text"
@@ -208,10 +213,10 @@ export default function UpdateDj() {
                         {Object.entries(djData.subgenres).map(([genre, subgenres]) => (
                             <div key={genre} className="genre-section mt-3">
                                 <Row>
-                                    <Col>
+                                    <Col xs={9}>
                                         <h5>{genre}</h5>
                                     </Col>
-                                    <Col className="text-end">
+                                    <Col xs={3} className="text-end">
                                         <Button
                                             variant="danger"
                                             size="sm"
@@ -249,10 +254,19 @@ export default function UpdateDj() {
                     </Form.Group>
 
                     <Form.Group controlId="venues" className="mt-3">
-                        <Form.Label>Venues</Form.Label>
-                        <div className="venue-section">
+                        <Form.Label className="form-label">Venues</Form.Label>
+                        <InputGroup>
+                            <Form.Control
+                                type="text"
+                                value={newVenue}
+                                onChange={(e) => setNewVenue(e.target.value)}
+                                placeholder="Enter new venue"
+                            />
+                            <Button variant="secondary" onClick={handleAddVenue}>Add Venue</Button>
+                        </InputGroup>
+                        <ul className="venues mt-2">
                             {djData.venues.map((venue, index) => (
-                                <Badge key={index} bg="secondary" className="me-2 mb-2">
+                                <li key={index} className="d-flex align-items-center">
                                     {venue}
                                     <Button
                                         variant="link"
@@ -261,30 +275,19 @@ export default function UpdateDj() {
                                     >
                                         <FaTimes />
                                     </Button>
-                                </Badge>
+                                </li>
                             ))}
-                            <InputGroup className="mt-2">
-                                <Form.Control
-                                    type="text"
-                                    value={newVenue}
-                                    onChange={(e) => setNewVenue(e.target.value)}
-                                    placeholder="Enter venue"
-                                />
-                                <Button variant="secondary" onClick={handleAddVenue}>Add Venue</Button>
-                            </InputGroup>
-                        </div>
+                        </ul>
                     </Form.Group>
 
-                    <Button variant="primary" type="submit" className="mt-3">
-                        Update DJ
-                    </Button>
+
+                    <Form.Group className="mt-4">
+                        <Button variant="primary" type="submit">Update DJ</Button>
+                        <Button variant="danger" className="ms-3" onClick={handleDelete}>Delete DJ</Button>
+                    </Form.Group>
                 </Form>
 
-                <Button variant="danger" className="mt-3" onClick={handleDelete}>
-                    Delete DJ
-                </Button>
-
-                {success && <p className="success-message mt-3">{success}</p>}
+                {success && <p className="success-message">{success}</p>}
             </Container>
         </div>
     );
