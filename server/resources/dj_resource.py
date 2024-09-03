@@ -113,9 +113,9 @@ class SearchDjs(Resource):
         return make_response(result, 200)
 
 class UpdateDj(Resource):
-    def put(self, dj_id):
-        if not self._is_admin():
-            return {'error': 'Unauthorized'}, 403
+    def patch(self, dj_id):
+        # if not self._is_admin():
+        #     return {'error': 'Unauthorized'}, 403
 
         parser = reqparse.RequestParser()
         parser.add_argument('name', type=str)

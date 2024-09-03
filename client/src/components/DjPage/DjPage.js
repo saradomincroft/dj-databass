@@ -58,7 +58,7 @@ export default function DjPage() {
                 <div className="dj-header">
                     <h1 className="dj-name">{dj.name}</h1>
 
-                    <DjProfilePictureEditor dj={dj} fetchDjData={fetchData} />
+                    {/* <DjProfilePictureEditor dj={dj} fetchDjData={fetchData} /> */}
                 </div>
                 <p><strong>City:</strong> {dj.city || 'N/A'}</p>
                 <p><strong>Music Producer:</strong> {dj.produces ? 'Yes' : 'No'}</p>

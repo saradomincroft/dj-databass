@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import DjProfilePictureEditor from '../DjProfilePictureEditor/DjProfilePictureEditor';
-import { Container, Form, Button, Badge, InputGroup } from 'react-bootstrap';
+import { Container, Form, Button, Badge, InputGroup, Row, Col } from 'react-bootstrap';
 import { FaTimes } from 'react-icons/fa';
 import './UpdateDj.css';
 
@@ -17,6 +16,7 @@ export default function UpdateDj() {
         city: '',
         produces: false
     });
+    const [newGenre, setNewGenre] = useState('');
     const [newSubgenre, setNewSubgenre] = useState('');
     const [newVenue, setNewVenue] = useState('');
     const [error, setError] = useState('');
@@ -27,11 +27,6 @@ export default function UpdateDj() {
             try {
                 const djResponse = await axios.get(`/api/dj/${dj_id}`);
                 setDjData(djResponse.data);
-
-                // Removed the unnecessary setUser call
-                // const userResponse = await axios.get('/api/me', { withCredentials: true });
-                // setUser(userResponse.data);
-
                 setError('');
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -50,21 +45,26 @@ export default function UpdateDj() {
         });
     };
 
-    const handleSubgenreChange = (e) => {
-        setNewSubgenre(e.target.value);
-    };
-
-    const handleVenueChange = (e) => {
-        setNewVenue(e.target.value);
-    };
-
-    const handleAddSubgenre = () => {
-        if (newSubgenre) {
+    const handleAddGenre = () => {
+        if (newGenre && !djData.subgenres[newGenre]) {
             setDjData(prevData => ({
                 ...prevData,
                 subgenres: {
                     ...prevData.subgenres,
-                    [prevData.genre]: [...(prevData.subgenres[prevData.genre] || []), newSubgenre]
+                    [newGenre]: []
+                }
+            }));
+            setNewGenre('');
+        }
+    };
+
+    const handleAddSubgenre = () => {
+        if (newSubgenre && djData.genre) {
+            setDjData(prevData => ({
+                ...prevData,
+                subgenres: {
+                    ...prevData.subgenres,
+                    [djData.genre]: [...(prevData.subgenres[djData.genre] || []), newSubgenre]
                 }
             }));
             setNewSubgenre('');
@@ -73,10 +73,10 @@ export default function UpdateDj() {
 
     const handleAddVenue = () => {
         if (newVenue) {
-            setDjData({
-                ...djData,
-                venues: [...djData.venues, newVenue]
-            });
+            setDjData(prevData => ({
+                ...prevData,
+                venues: [...prevData.venues, newVenue]
+            }));
             setNewVenue('');
         }
     };
@@ -91,48 +91,72 @@ export default function UpdateDj() {
         }));
     };
 
-    const handleRemoveVenue = (index) => {
-        setDjData({
-            ...djData,
-            venues: djData.venues.filter((_, i) => i !== index)
+    const handleRemoveGenre = (genre) => {
+        setDjData(prevData => {
+            const { [genre]: _, ...rest } = prevData.subgenres;
+            return {
+                ...prevData,
+                subgenres: rest
+            };
         });
+    };
+
+    const handleRemoveVenue = (index) => {
+        setDjData(prevData => ({
+            ...prevData,
+            venues: prevData.venues.filter((_, i) => i !== index)
+        }));
+    };
+
+    const validateForm = () => {
+        return Object.keys(djData.subgenres).length > 0 || djData.venues.length > 0;
     };
 
     const handleUpdate = async (e) => {
         e.preventDefault();
+        
+        if (!validateForm()) {
+            setError('Please add at least one subgenre or venue.');
+            return;
+        }
+        
         try {
-            await axios.put(`/api/dj/${dj_id}`, djData,
-                { withCredentials: true });
-                setSuccess('DJ updated successfully');
-                setError('');
-                navigate(`/dj/${dj_id}`);
+            console.log('Attempting to update DJ...');
+            const response = await axios.patch(`/api/dj/update/${dj_id}`, djData, { withCredentials: true });
+            console.log('Update successful:', response.data);
+            setSuccess('DJ updated successfully');
+            setError('');
+            navigate(`/dj/${dj_id}`);
+        } catch (error) {
+            console.error('Error updating DJ:', error);
+            setError('Error updating DJ. Please check the console for more details.');
+            setSuccess('');
+        }
+    };
+
+    const handleDelete = async () => {
+        if (window.confirm('Are you sure you want to delete this DJ?')) {
+            try {
+                await axios.delete(`/api/dj/${dj_id}`, { withCredentials: true });
+                navigate('/home');
             } catch (error) {
-                console.error('Error updating DJ:', error);
-                setError('Error updating DJ. Please check the console for more details.');
-                setSuccess('');
+                console.error('Error deleting DJ:', error);
+                setError('Error deleting DJ. Please check the console for more details.');
             }
-        };
-    
-        const handleDelete = async () => {
-            if (window.confirm('Are you sure you want to delete this DJ?')) {
-                try {
-                    await axios.delete(`/api/dj/${dj_id}`, { withCredentials: true });
-                    navigate('/home');
-                } catch (error) {
-                    console.error('Error deleting DJ:', error);
-                    setError('Error deleting DJ. Please check the console for more details.');
-                }
-            }
-        };
-    
-        if (error) return <p className="error-message">{error}</p>;
-        if (!djData) return <p className="loading-message">Loading...</p>;
-    
-        return (
+        }
+    };
+
+    if (error) return <p className="error-message">{error}</p>;
+    if (!djData) return <p className="loading-message">Loading...</p>;
+
+    return (
+        <div className="tabcontent">
             <Container>
-                <h1>Update DJ Information</h1>
-                <DjProfilePictureEditor dj={djData} fetchDjData={() => setDjData(djData)} />
-    
+                <div className="d-flex justify-content-between align-items-center mb-4">
+                    <Button variant="secondary" onClick={() => navigate(`/dj/${dj_id}`)}>Return to DJ Page</Button>
+                    <h1>Update DJ Information</h1>
+                </div>
+
                 <Form onSubmit={handleUpdate}>
                     <Form.Group controlId="name">
                         <Form.Label>Name</Form.Label>
@@ -145,8 +169,8 @@ export default function UpdateDj() {
                             required
                         />
                     </Form.Group>
-    
-                    <Form.Group controlId="city">
+
+                    <Form.Group controlId="city" className="mt-3">
                         <Form.Label>City</Form.Label>
                         <Form.Control
                             type="text"
@@ -156,8 +180,8 @@ export default function UpdateDj() {
                             placeholder="Enter DJ city"
                         />
                     </Form.Group>
-    
-                    <Form.Group controlId="produces">
+
+                    <Form.Group controlId="produces" className="mt-3">
                         <Form.Check
                             type="checkbox"
                             name="produces"
@@ -166,31 +190,46 @@ export default function UpdateDj() {
                             label="Music Producer"
                         />
                     </Form.Group>
-    
-                    <Form.Group controlId="genre">
+
+                    <Form.Group controlId="genre" className="mt-3">
                         <Form.Label>Genre</Form.Label>
-                        <Form.Control
-                            type="text"
-                            name="genre"
-                            value={djData.genre}
-                            onChange={handleInputChange}
-                            placeholder="Enter DJ genre"
-                        />
+                        <InputGroup>
+                            <Form.Control
+                                type="text"
+                                value={newGenre}
+                                onChange={(e) => setNewGenre(e.target.value)}
+                                placeholder="Enter new genre"
+                            />
+                            <Button variant="secondary" onClick={handleAddGenre}>Add Genre</Button>
+                        </InputGroup>
                     </Form.Group>
-    
-                    <Form.Group controlId="subgenres">
+
+                    <Form.Group controlId="subgenres" className="mt-3">
                         <Form.Label>Subgenres</Form.Label>
-                        {Object.keys(djData.subgenres).map(genre => (
-                            <div key={genre} className="genre-section">
-                                <h3>{genre}</h3>
+                        {Object.entries(djData.subgenres).map(([genre, subgenres]) => (
+                            <div key={genre} className="genre-section mt-3">
+                                <Row>
+                                    <Col>
+                                        <h5>{genre}</h5>
+                                    </Col>
+                                    <Col className="text-end">
+                                        <Button
+                                            variant="danger"
+                                            size="sm"
+                                            onClick={() => handleRemoveGenre(genre)}
+                                        >
+                                            Remove Genre
+                                        </Button>
+                                    </Col>
+                                </Row>
                                 <ul className="subgenres">
-                                    {djData.subgenres[genre].map((subgenre, index) => (
-                                        <li key={index}>
+                                    {subgenres.map((subgenre, index) => (
+                                        <li key={index} className="d-flex align-items-center">
                                             {subgenre}
                                             <Button
                                                 variant="link"
                                                 onClick={() => handleRemoveSubgenre(genre, index)}
-                                                className="remove-subgenre"
+                                                className="remove-subgenre ms-2"
                                             >
                                                 <FaTimes />
                                             </Button>
@@ -201,7 +240,7 @@ export default function UpdateDj() {
                                     <Form.Control
                                         type="text"
                                         value={newSubgenre}
-                                        onChange={handleSubgenreChange}
+                                        onChange={(e) => setNewSubgenre(e.target.value)}
                                         placeholder="Enter subgenre"
                                     />
                                     <Button variant="secondary" onClick={handleAddSubgenre}>Add Subgenre</Button>
@@ -209,41 +248,47 @@ export default function UpdateDj() {
                             </div>
                         ))}
                     </Form.Group>
-    
-                    <Form.Group controlId="venues">
+
+                    <Form.Group controlId="venues" className="mt-3">
                         <Form.Label>Venues</Form.Label>
-                        {djData.venues.map((venue, index) => (
-                            <div key={index} className="venue-badge">
-                                <Badge bg="secondary">
+                        <div className="venue-section">
+                            {djData.venues.map((venue, index) => (
+                                <Badge key={index} bg="secondary" className="me-2 mb-2">
                                     {venue}
                                     <Button
                                         variant="link"
                                         onClick={() => handleRemoveVenue(index)}
-                                        className="remove-venue"
+                                        className="remove-venue ms-2"
                                     >
                                         <FaTimes />
                                     </Button>
                                 </Badge>
-                            </div>
-                        ))}
-                        <InputGroup className="mb-2">
-                            <Form.Control
-                                type="text"
-                                value={newVenue}
-                                onChange={handleVenueChange}
-                                placeholder="Enter venue"
-                            />
-                            <Button variant="secondary" onClick={handleAddVenue}>Add Venue</Button>
-                        </InputGroup>
+                            ))}
+                            <InputGroup className="mt-2">
+                                <Form.Control
+                                    type="text"
+                                    value={newVenue}
+                                    onChange={(e) => setNewVenue(e.target.value)}
+                                    placeholder="Enter venue"
+                                />
+                                <Button variant="secondary" onClick={handleAddVenue}>Add Venue</Button>
+                            </InputGroup>
+                        </div>
                     </Form.Group>
-    
-                    <Button variant="primary" type="submit">Update DJ</Button>
-                    <Button variant="danger" onClick={handleDelete} className="ms-2">Delete DJ</Button>
-    
-                    {error && <div className="text-error mt-3">{error}</div>}
-                    {success && <div className="text-success mt-3">{success}</div>}
+
+                    <div className="d-flex mt-4">
+                        <Button
+                            type="submit"
+                            variant="primary"
+                            disabled={!validateForm()}
+                            className="me-2"
+                        >
+                            Update DJ
+                        </Button>
+                        <Button variant="danger" onClick={handleDelete}>Delete DJ</Button>
+                    </div>
                 </Form>
             </Container>
-        );
-    }
-    
+        </div>
+    );
+}

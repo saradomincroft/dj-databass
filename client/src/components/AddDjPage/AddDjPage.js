@@ -195,14 +195,16 @@ export default function AddDjPage() {
                     {/* City */}
                     <Form.Group controlId="city">
                         <Form.Label>City:</Form.Label>
-                        <Form.Control
-                            type="text"
-                            id="city"
-                            name="city"
-                            value={city}
-                            onChange={(e) => setCity(e.target.value)}
-                            required
-                        />
+                        <InputGroup>
+                            <Form.Control
+                                type="text"
+                                id="city"
+                                name="city"
+                                value={city}
+                                onChange={(e) => setCity(e.target.value)}
+                                required
+                            />
+                        </InputGroup>
                     </Form.Group>
 
                     {/* Music Production Status */}

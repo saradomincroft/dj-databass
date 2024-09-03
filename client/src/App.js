@@ -26,31 +26,39 @@ export default function App() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     useEffect(() => {
-        const authStatus = localStorage.getItem('isAuthenticated');
+        const authStatus = localStorage.getItem('isAuthenticated') === 'true';
         const userData = localStorage.getItem('userData');
         
-        if (authStatus === 'true' && userData) {
+        console.log("Checking authentication status...");
+        console.log("authStatus:", authStatus);
+        console.log("userData:", userData);
+
+        if (authStatus && userData) {
             setIsAuthenticated(true);
         } else {
             setIsAuthenticated(false);
         }
     }, []);
 
-    const handleLogin = () => {
+    const handleLogin = (userData) => {
         localStorage.setItem('isAuthenticated', 'true');
+        localStorage.setItem('userData', JSON.stringify(userData));
         setIsAuthenticated(true);
+        console.log("User logged in. Authenticated:", true);
     };
 
-    const handleSignup = () => {
+    const handleSignup = (userData) => {
         localStorage.setItem('isAuthenticated', 'true');
+        localStorage.setItem('userData', JSON.stringify(userData));
         setIsAuthenticated(true);
+        console.log("User signed up. Authenticated:", true);
     };
 
     const handleLogout = () => {
         localStorage.removeItem('isAuthenticated');
         localStorage.removeItem('userData');
         setIsAuthenticated(false);
-        window.location.href = '/'; 
+        console.log("User logged out. Authenticated:", false);
     };
 
     return (
