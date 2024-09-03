@@ -48,7 +48,6 @@ export default function ProfilePictureEditor({ user, fetchUserData }) {
                 },
                 withCredentials: true,
             });
-            console.log('Upload Response:', response.data);
             setSuccessMessage('Profile image uploaded successfully.');
             await fetchUserData(); 
             setIsEditing(false);
@@ -56,7 +55,6 @@ export default function ProfilePictureEditor({ user, fetchUserData }) {
         } catch (error) {
             const errorMessage = error.response?.data?.error || 'Failed to upload profile image.';
             setError(errorMessage);
-            console.error('Error uploading profile image:', error);
         }
     };
 

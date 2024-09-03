@@ -17,7 +17,6 @@ export default function Signup({ onSignup, onLogin }) {
             return;
         }
         try {
-            // Step 1: Sign up the user
             const signupResponse = await axios.post('http://localhost:4000/api/signup', {
                 username,
                 password,
@@ -26,7 +25,6 @@ export default function Signup({ onSignup, onLogin }) {
 
             console.log(signupResponse.data);
 
-            // Step 2: Automatically log in the user after successful signup
             const loginResponse = await axios.post('http://localhost:4000/api/login', 
             { username, password }, 
             { withCredentials: true });
@@ -43,7 +41,6 @@ export default function Signup({ onSignup, onLogin }) {
                 onLogin(); // Notify App that login was successful
             }
 
-            // Redirect to home page after successful signup and login
             navigate('/home');
         } catch (err) {
             setError('Signup failed: ' + (err.response?.data?.error || 'Unknown error'));
@@ -52,8 +49,8 @@ export default function Signup({ onSignup, onLogin }) {
     };
 
     return (
-        <div>
-            <h2>Signup</h2>
+        <div className="form-container">
+            <h2 className="form-title">Signup</h2>
             <form onSubmit={handleSubmit}>
                 <label>
                     Username:
@@ -64,7 +61,6 @@ export default function Signup({ onSignup, onLogin }) {
                         required
                     />
                 </label>
-                <br />
                 <label>
                     Password:
                     <input
@@ -74,7 +70,6 @@ export default function Signup({ onSignup, onLogin }) {
                         required
                     />
                 </label>
-                <br />
                 <label>
                     Confirm Password:
                     <input
@@ -84,7 +79,6 @@ export default function Signup({ onSignup, onLogin }) {
                         required
                     />
                 </label>
-                <br />
                 <label>
                     <input
                         type="checkbox"
@@ -93,7 +87,6 @@ export default function Signup({ onSignup, onLogin }) {
                     />
                     Admin
                 </label>
-                <br />
                 <button type="submit">Signup</button>
             </form>
             {error && <p>{error}</p>}

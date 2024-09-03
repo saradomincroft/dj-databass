@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import './LoginSignup.css'
 
 export default function Login({ onLogin }) {
     const [username, setUsername] = useState('');
@@ -13,7 +14,7 @@ export default function Login({ onLogin }) {
         try {
             const response = await axios.post('http://localhost:4000/api/login', 
             { username, password }, 
-            { withCredentials: true })
+            { withCredentials: true });
 
             // Store token or session information
             if (response.data.token) {
@@ -30,8 +31,8 @@ export default function Login({ onLogin }) {
     };
 
     return (
-        <div>
-            <h2>Login</h2>
+        <div className="form-container">
+            <h2 className="form-title">Login</h2>
             <form onSubmit={handleSubmit}>
                 <label>
                     Username:
@@ -42,7 +43,6 @@ export default function Login({ onLogin }) {
                         required
                     />
                 </label>
-                <br />
                 <label>
                     Password:
                     <input
@@ -52,10 +52,12 @@ export default function Login({ onLogin }) {
                         required
                     />
                 </label>
-                <br />
+                <div className="extra-space"></div>
+                <div className="extra-space"></div>
+                <div className="extra-space"></div>
                 <button type="submit">Login</button>
             </form>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {error && <p>{error}</p>}
         </div>
     );
 }

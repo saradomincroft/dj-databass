@@ -1,0 +1,84 @@
+/* Container for login and signup forms */
+.form-container {
+    padding: 20px 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 80%;
+    margin: 0 auto;
+    background: rgba(255, 36, 0, 0.8);
+    font-family: monospace;
+    border-radius: 8px;
+    color: white;
+    height: 500px;
+    position: relative;
+    text-align: center;
+}
+
+/* Title styling */
+.form-title {
+    font-size: 24px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+/* Form styling */
+.form-container form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 400px;
+}
+
+/* Input and button styling */
+.form-container label {
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.form-container input {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: none;
+    border-radius: 5px;
+    width: 100%;
+    max-width: 80%;
+}
+
+.form-container button {
+    background: rgba(30, 30, 30);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.form-container button:hover {
+    background: rgba(50, 50, 50);
+}
+
+/* Error message styling */
+.form-container p {
+    color: red;
+    margin-top: 10px;
+}
+
+/* Extra space for login form to prevent shifting on switch */
+.extra-space {
+    height: 50px; /* Adjust height as needed */
+}
+
+/* Media queries for responsive design */
+@media (max-width: 767px) {
+    .form-container {
+        font-size: 14px;
+        padding: 15px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-container {
+        font-size: 12px;
+        padding: 10px 15px;
+    }
+}
