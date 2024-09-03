@@ -58,13 +58,14 @@ export default function UpdateDj() {
         }
     };
 
-    const handleAddSubgenre = () => {
-        if (newSubgenre && djData.genre) {
+    const handleAddSubgenre = (genre) => {
+        const subgenre = newSubgenre.trim();
+        if (subgenre && !djData.subgenres[genre]?.includes(subgenre)) {
             setDjData(prevData => ({
                 ...prevData,
                 subgenres: {
                     ...prevData.subgenres,
-                    [djData.genre]: [...(prevData.subgenres[djData.genre] || []), newSubgenre]
+                    [genre]: [...(prevData.subgenres[genre] || []), subgenre]
                 }
             }));
             setNewSubgenre('');
@@ -192,7 +193,6 @@ export default function UpdateDj() {
                     </Form.Group>
 
                     <Form.Group controlId="genre" className="mt-3">
-                        <Form.Label>Genre</Form.Label>
                         <InputGroup>
                             <Form.Control
                                 type="text"
@@ -205,7 +205,6 @@ export default function UpdateDj() {
                     </Form.Group>
 
                     <Form.Group controlId="subgenres" className="mt-3">
-                        <Form.Label>Subgenres</Form.Label>
                         {Object.entries(djData.subgenres).map(([genre, subgenres]) => (
                             <div key={genre} className="genre-section mt-3">
                                 <Row>
@@ -243,7 +242,7 @@ export default function UpdateDj() {
                                         onChange={(e) => setNewSubgenre(e.target.value)}
                                         placeholder="Enter subgenre"
                                     />
-                                    <Button variant="secondary" onClick={handleAddSubgenre}>Add Subgenre</Button>
+                                    <Button variant="secondary" onClick={() => handleAddSubgenre(genre)}>Add Subgenre</Button>
                                 </InputGroup>
                             </div>
                         ))}
@@ -276,18 +275,16 @@ export default function UpdateDj() {
                         </div>
                     </Form.Group>
 
-                    <div className="d-flex mt-4">
-                        <Button
-                            type="submit"
-                            variant="primary"
-                            disabled={!validateForm()}
-                            className="me-2"
-                        >
-                            Update DJ
-                        </Button>
-                        <Button variant="danger" onClick={handleDelete}>Delete DJ</Button>
-                    </div>
+                    <Button variant="primary" type="submit" className="mt-3">
+                        Update DJ
+                    </Button>
                 </Form>
+
+                <Button variant="danger" className="mt-3" onClick={handleDelete}>
+                    Delete DJ
+                </Button>
+
+                {success && <p className="success-message mt-3">{success}</p>}
             </Container>
         </div>
     );
