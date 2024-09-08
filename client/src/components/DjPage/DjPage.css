@@ -21,7 +21,7 @@
 
 .genres {
     padding-left: 0;
-    margin: 0; /* Remove margin */
+    margin: 0;
 }
 
 .genre-section {
@@ -31,7 +31,7 @@
 .genre-section h3 {
     margin-bottom: 10px;
     font-size: 1.5em;
-    text-align: left; /* Left align genre section title */
+    text-align: left; 
 }
 
 .subgenres {
@@ -48,14 +48,40 @@
     margin-top: 20px;
 }
 
-.error-message {
-    color: #f44336; /* Error color */
-}
-
 .loading-message {
     color: #fff;
 }
 
 .btn {
     margin-right: 10px;
+}
+
+.dj-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.heart-container {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    padding: 0;
+}
+
+.favourite-icon {
+    font-size: 1.5rem;
+    transition: color 0.3s ease;
+    color: white;
+}
+
+
+.favourite-icon.filled {
+    color: red;
+}
+
+.dj-name {
+    font-size: 2rem;
+    margin: 0;
 }

@@ -10,18 +10,18 @@ export default function DjPage() {
     const [dj, setDj] = useState(null);
     const [error, setError] = useState(null);
     const [user, setUser] = useState(null);
+    const [favourites, setFavourites] = useState([]);
 
-    // Function to fetch DJ data
+    // Function to fetch DJ data and user data
     const fetchData = async () => {
         try {
-            // Fetch DJ details
-            const djResponse = await axios.get(`/api/dj/${dj_id}`);
+            const [djResponse, userResponse] = await Promise.all([
+                axios.get(`/api/dj/${dj_id}`),
+                axios.get('/api/me', { withCredentials: true })
+            ]);
             setDj(djResponse.data);
-
-            // Fetch user details to check admin status
-            const userResponse = await axios.get('/api/me', { withCredentials: true });
             setUser(userResponse.data);
-
+            setFavourites(userResponse.data.favourites || []);
             setError(null);
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -32,6 +32,25 @@ export default function DjPage() {
     useEffect(() => {
         fetchData();
     }, [dj_id]);
+
+    // Toggle favourite function
+    const handleToggleFavourite = async () => {
+        try {
+            const isFavourite = favourites.some(fav => fav.id === dj.id);
+            if (isFavourite) {
+                await axios.delete('/api/me/favourites', { data: { dj_id: dj.id }, withCredentials: true });
+                setFavourites(prevFavourites => prevFavourites.filter(fav => fav.id !== dj.id));
+            } else {
+                await axios.post('/api/me/favourites', { dj_id: dj.id }, { withCredentials: true });
+                setFavourites(prevFavourites => [...prevFavourites, dj]);
+            }
+        } catch (error) {
+            console.error('Error updating favourites:', error);
+            setError('Error updating favourites.');
+        }
+    };
+
+    const isFavourite = () => favourites.some(fav => fav.id === dj.id);
 
     const handleDelete = async () => {
         if (window.confirm('Are you sure you want to delete this DJ?')) {
@@ -57,8 +76,12 @@ export default function DjPage() {
             <div className="dj-page">
                 <div className="dj-header">
                     <h1 className="dj-name">{dj.name}</h1>
-
-                    {/* <DjProfilePictureEditor dj={dj} fetchDjData={fetchData} /> */}
+                    {/* Favourite/Unfavourite button */}
+                    <button className="btn heart-container" onClick={handleToggleFavourite}>
+                        <span className={`favourite-icon ${isFavourite() ? 'filled' : ''}`}>
+                            {isFavourite() ? '❤️' : '♡'}
+                        </span>
+                    </button>
                 </div>
                 <p><strong>City:</strong> {dj.city || 'N/A'}</p>
                 <p><strong>Music Producer:</strong> {dj.produces ? 'Yes' : 'No'}</p>
