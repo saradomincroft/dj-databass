@@ -16,17 +16,18 @@ export default function Login({ onLogin }) {
             { username, password }, 
             { withCredentials: true });
 
-            // Store token or session information
+
             if (response.data.token) {
                 localStorage.setItem('token', response.data.token);
             }
 
             if (onLogin) {
-                onLogin(); // Notify App that login was successful
+                onLogin(); 
             }
             navigate('/home');
         } catch (err) {
-            setError(err.response?.data?.message || 'Login failed');
+
+            setError(err.response?.data?.message || 'Login failed. Please try again.');
         }
     };
 
@@ -52,12 +53,11 @@ export default function Login({ onLogin }) {
                         required
                     />
                 </label>
-                <div className="extra-space"></div>
-                <div className="extra-space"></div>
-                <div className="extra-space"></div>
+                {error && <p>{error}</p>}
+
                 <button type="submit">Login</button>
             </form>
-            {error && <p>{error}</p>}
+
         </div>
     );
 }

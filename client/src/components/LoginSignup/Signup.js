@@ -38,7 +38,7 @@ export default function Signup({ onSignup, onLogin }) {
             }
 
             if (onLogin) {
-                onLogin(); // Notify App that login was successful
+                onLogin(); 
             }
 
             navigate('/home');
@@ -87,9 +87,12 @@ export default function Signup({ onSignup, onLogin }) {
                     />
                     Admin
                 </label>
+                <div className="extra-space"></div>
+
                 <button type="submit">Signup</button>
             </form>
             {error && <p>{error}</p>}
+
         </div>
     );
 }

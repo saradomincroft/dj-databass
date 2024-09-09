@@ -35,11 +35,16 @@ class Login(Resource):
         password = data.get('password')
 
         user = User.query.filter_by(username=username).first()
-        if user and user.authenticate(password):
-            session['user_id'] = user.id
-            return make_response({"user": user.to_dict()}, 200)
 
-        return make_response({"error": "Unauthorized"}, 403)
+        if not user:
+            return make_response({"message": "User not found"}, 404)
+
+        if user and not user.authenticate(password):
+            return make_response({"message": "Incorrect password"}, 401)
+
+        session['user_id'] = user.id
+        return make_response({"user": user.to_dict()}, 200)
+
 
 class Logout(Resource):
     def delete(self):
