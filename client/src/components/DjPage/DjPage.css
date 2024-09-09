@@ -66,12 +66,12 @@
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 24px;
+    font-size: 34px;
     padding: 0;
 }
 
 .favourite-icon {
-    font-size: 1.5rem;
+    font-size: 2.5rem;
     transition: color 0.3s ease;
     color: white;
 }
@@ -84,4 +84,18 @@
 .dj-name {
     font-size: 2rem;
     margin: 0;
+}
+
+
+.back-home-btn {
+    display: block;
+    margin-bottom: 15px;
+    padding: 10px 15px;
+    background-color: grey;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    text-align: center;
 }

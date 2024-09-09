@@ -162,8 +162,11 @@ export default function Djs() {
     return (
         <div id="Djs">
             <div className="container-fluid">
-                        <div className="scrollable-container">
-                            <div className="filter-controls form-controls-container">
+                <div className="scrollable-container">
+                    <div className="filter-controls form-controls-container">
+                        {/* FILTER NAME & PRODUCTION STATUS */}
+                        <div className="row">
+                            <div className="col-6 d-flex align-items-center">
                                 <input
                                     type="text"
                                     className="form-control mb-3"
@@ -171,47 +174,57 @@ export default function Djs() {
                                     value={search}
                                     onChange={handleSearch}
                                 />
+                            </div>
+                            <div className="col-6 d-flex align-items-center">
                                 <select
                                     id="produces"
-                                    className="form-select mb-3"
+                                    className="form-select  mb-3"
                                     value={selectedProduces}
                                     onChange={handleProduceChange}
                                 >
-                                    <option value="">Select Produces Status</option>
-                                    <option value="Yes">Yes</option>
-                                    <option value="No">No</option>
-                                </select>
-                                <div className="mb-3">
-                                    <select
-                                        id="genre"
-                                        className="form-select"
-                                        value={selectedGenre}
-                                        onChange={handleGenreChange}
-                                    >
-                                        <option value="">Select Genre</option>
-                                        {genres.map(genre => (
-                                            <option key={genre.id} value={genre.title}>
-                                                {genre.title}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                            <div className="mb-3">
-                                <select
-                                    id="subgenre"
-                                    className="form-select"
-                                    value={selectedSubgenre}
-                                    onChange={handleSubgenreChange}
-                                    disabled={!selectedGenre}
-                                >
-                                    <option value="">Select Subgenre</option>
-                                    {subgenres.map(subgenre => (
-                                        <option key={subgenre.id} value={subgenre.subtitle}>
-                                            {subgenre.subtitle}
-                                        </option>
-                                    ))}
+                                <option value="">Producer?</option>
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
                                 </select>
                             </div>
+                        </div>
+                        
+                        {/* GENRES & SUBGENRES DROPDOWNS */}
+                        <div className="mb-3 row">
+                        <div className="col-6">
+                            <select
+                                id="genre"
+                                className="form-select"
+                                value={selectedGenre}
+                                onChange={handleGenreChange}
+                            >
+                                <option value="">Select Genre</option>
+                                {genres.map(genre => (
+                                    <option key={genre.id} value={genre.title}>
+                                        {genre.title}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="col-6">
+                            <select
+                                id="subgenre"
+                                className="form-select"
+                                value={selectedSubgenre}
+                                onChange={handleSubgenreChange}
+                                disabled={!selectedGenre}
+                            >
+                                <option value="">Select Subgenre</option>
+                                {subgenres.map(subgenre => (
+                                    <option key={subgenre.id} value={subgenre.subtitle}>
+                                        {subgenre.subtitle}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+                    {/* VENUE DROPDOWNS */}
+                    <div className="row">
                             <div className="mb-3">
                                 <select
                                     id="venue"
@@ -219,17 +232,18 @@ export default function Djs() {
                                     value={selectedVenue}
                                     onChange={handleVenueChange}
                                 >
-                                    <option value="">Select Venue</option>
-                                    {venues.map(venue => (
-                                        <option key={venue.id} value={venue.venuename}>
-                                            {venue.venuename}
-                                        </option>
-                                    ))}
+                                <option value="">Select Venue</option>
+                                {venues.map(venue => (
+                                    <option key={venue.id} value={venue.venuename}>
+                                        {venue.venuename}
+                                    </option>
+                                ))}
                                 </select>
                             </div>
-                            <button className="btn btn-secondary" onClick={handleClear}>
-                                Clear Filters
-                            </button>
+                        </div>
+                        <button className="btn btn-secondary" onClick={handleClear}>
+                            Clear Filters
+                        </button>
                     </div>
 
                     <div className="dj-list">

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import DjProfilePictureEditor from '../DjProfilePictureEditor/DjProfilePictureEditor';
 import './DjPage.css';
 
 export default function DjPage() {
@@ -12,7 +11,6 @@ export default function DjPage() {
     const [user, setUser] = useState(null);
     const [favourites, setFavourites] = useState([]);
 
-    // Function to fetch DJ data and user data
     const fetchData = async () => {
         try {
             const [djResponse, userResponse] = await Promise.all([
@@ -33,7 +31,6 @@ export default function DjPage() {
         fetchData();
     }, [dj_id]);
 
-    // Toggle favourite function
     const handleToggleFavourite = async () => {
         try {
             const isFavourite = favourites.some(fav => fav.id === dj.id);
@@ -49,8 +46,6 @@ export default function DjPage() {
             setError('Error updating favourites.');
         }
     };
-
-    const isFavourite = () => favourites.some(fav => fav.id === dj.id);
 
     const handleDelete = async () => {
         if (window.confirm('Are you sure you want to delete this DJ?')) {
@@ -74,17 +69,22 @@ export default function DjPage() {
     return (
         <div className="tabcontent">
             <div className="dj-page">
-                <div className="dj-header">
-                    <h1 className="dj-name">{dj.name}</h1>
-                    {/* Favourite/Unfavourite button */}
-                    <button className="btn heart-container" onClick={handleToggleFavourite}>
-                        <span className={`favourite-icon ${isFavourite() ? 'filled' : ''}`}>
-                            {isFavourite() ? '❤️' : '♡'}
-                        </span>
-                    </button>
-                </div>
+            <button className="btn back-home-btn" onClick={() => navigate('/home')}>
+                Home
+            </button>
+
+            <div className="dj-header">
+                <h1 className="dj-name">{dj.name}</h1>
+                <button className="btn heart-container" onClick={handleToggleFavourite}>
+                    <span className={`favourite-icon ${favourites.some(fav => fav.id === dj.id) ? 'filled' : ''}`}>
+                        {favourites.some(fav => fav.id === dj.id) ? '❤️' : '♡'}
+                    </span>
+                </button>
+            </div>
+            <div className="dj-info">
                 <p><strong>City:</strong> {dj.city || 'N/A'}</p>
                 <p><strong>Music Producer:</strong> {dj.produces ? 'Yes' : 'No'}</p>
+
                 <h2>Genres and Subgenres</h2>
                 {dj.genres.length > 0 ? (
                     <div className="genres">
@@ -105,15 +105,16 @@ export default function DjPage() {
                     </div>
                 ) : 'N/A'}
                 <p><strong>Venues:</strong> {dj.venues.length > 0 ? dj.venues.join(', ') : 'N/A'}</p>
-                
-                {/* Conditionally render Update and Delete buttons based on admin status */}
-                {user && user.is_admin && (
-                    <div className="admin-controls">
-                        <button className="btn btn-primary" onClick={handleUpdate}>Update</button>
-                        <button className="btn btn-danger" onClick={handleDelete}>Delete</button>
-                    </div>
-                )}
             </div>
+            
+            {user && user.is_admin && (
+                <div className="admin-controls">
+                    <button className="btn btn-primary" onClick={handleUpdate}>Update</button>
+                    <button className="btn btn-danger" onClick={handleDelete}>Delete</button>
+                </div>
+            )}
         </div>
+        </div>
+
     );
 }
