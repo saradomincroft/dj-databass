@@ -169,7 +169,7 @@ export default function Djs() {
                             <div className="col-6 d-flex align-items-center">
                                 <input
                                     type="text"
-                                    className="form-control mb-3"
+                                    className="form-control mb-2"
                                     placeholder="Search DJs by name"
                                     value={search}
                                     onChange={handleSearch}
@@ -178,7 +178,7 @@ export default function Djs() {
                             <div className="col-6 d-flex align-items-center">
                                 <select
                                     id="produces"
-                                    className="form-select  mb-3"
+                                    className="form-select"
                                     value={selectedProduces}
                                     onChange={handleProduceChange}
                                 >
