@@ -226,7 +226,8 @@ export default function AddDjPage() {
 
                     {/* Genres */}
                     <Form.Group controlId="genres">
-                        <Form.Label>Genres <br/> You must add at least 1 genre to submit DJ <br/>Each genre must have at least 1 subgenre</Form.Label>
+                        <Form.Label>Genres </Form.Label>
+                        {/* <br/> You must add at least 1 genre to submit DJ <br/>Each genre must have at least 1 subgenre */}
                         <InputGroup className="mb-2">
                             <Form.Control
                                 type="text"
@@ -246,38 +247,45 @@ export default function AddDjPage() {
                                         <FaTimes />
                                     </Button>
                                 </div>
-                                <div className="subgenre-section">
-                                    {subgenres[genre]?.map((subgenre, subIndex) => (
-                                        <div key={subIndex} className="subgenre-badge">
-                                            <Badge bg="secondary">
-                                                {subgenre}
-                                                <Button
-                                                    variant="link"
-                                                    onClick={() => handleSubgenreRemove(genre, subIndex)}
-                                                    className="remove-subgenre"
-                                                >
-                                                    <FaTimes />
-                                                </Button>
-                                            </Badge>
-                                        </div>
-                                    ))}
-                                    <InputGroup className="mb-2">
-                                        <Form.Control
-                                            type="text"
-                                            value={subgenreInputs[genre] || ''}
-                                            onChange={(e) => handleSubgenreInputChange(e, genre)}
-                                            placeholder="Enter subgenre"
-                                        />
-                                        <Button variant="secondary" onClick={() => handleAddSubgenre(genre)}>Add Subgenre</Button>
-                                    </InputGroup>
-                                </div>
+
+                                {/* Only show subgenre inputs when a genre is added */}
+                                {subgenres[genre] && (
+                                    <div className="subgenre-section">
+                                         <Form.Label>Add at least one subgenre of {genre} </Form.Label>
+                                        {subgenres[genre]?.map((subgenre, subIndex) => (
+                                            <div key={subIndex} className="subgenre-badge">
+                                                <Badge bg="secondary">
+                                                    {subgenre}
+                                                    <Button
+                                                        variant="link"
+                                                        onClick={() => handleSubgenreRemove(genre, subIndex)}
+                                                        className="remove-subgenre"
+                                                    >
+                                                        <FaTimes />
+                                                    </Button>
+                                                </Badge>
+                                            </div>
+                                        ))}
+                                        <InputGroup className="mb-2">
+                                            <Form.Control
+                                                type="text"
+                                                value={subgenreInputs[genre]}
+                                                onChange={(e) => handleSubgenreInputChange(e, genre)}
+                                                placeholder="Enter subgenre"
+                                            />
+                                            <Button variant="primary" onClick={() => handleAddSubgenre(genre)}>
+                                                Add Subgenre
+                                            </Button>
+                                        </InputGroup>
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </Form.Group>
 
                     {/* Venues */}
                     <Form.Group controlId="venues">
-                        <Form.Label>Venues <br /> You must add at least 1 venue to submit DJ</Form.Label>
+                        <Form.Label>Venues:</Form.Label>
                         <InputGroup className="mb-2">
                             <Form.Control
                                 type="text"
@@ -289,9 +297,9 @@ export default function AddDjPage() {
                             />
                             <Button variant="secondary" onClick={handleAddVenue}>Add Venue</Button>
                         </InputGroup>
-                        {venues.map((venue, index) => (
-                            <div key={index} className="venue-badge">
-                                <Badge bg="secondary">
+                        <div className="venue-badges">
+                            {venues.map((venue, index) => (
+                                <Badge key={index} bg="secondary" className="venue-badge">
                                     {venue}
                                     <Button
                                         variant="link"
@@ -301,32 +309,16 @@ export default function AddDjPage() {
                                         <FaTimes />
                                     </Button>
                                 </Badge>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </Form.Group>
 
                     {/* Submit Button */}
-                    <div className="form-buttons">
-                        <Button
-                            variant="primary"
-                            type="submit"
-                            disabled={!isFormValid()}
-                        >
-                            Submit
-                        </Button>
-                        <Button
-                            variant="secondary"
-                            type="button"
-                            onClick={handleClearForm}
-                            className="clear-form-button"
-                        >
-                            Clear Form
-                        </Button>
-                    </div>
-
-                    {/* Form Feedback */}
-                    {submitError && <div className="text-danger">{submitError}</div>}
-                    {submitSuccess && <div className="text-success">{submitSuccess}</div>}
+                    <Button variant="primary" type="submit" disabled={!isFormValid()}>
+                        Add DJ
+                    </Button>
+                    {submitError && <div className="submit-error">{submitError}</div>}
+                    {submitSuccess && <div className="submit-success">{submitSuccess}</div>}
                 </Form>
             </Container>
         </div>
